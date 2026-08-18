@@ -26,6 +26,6 @@ WORKDIR /app
 
 COPY --from=build /app/publish .
 
-EXPOSE 8080
+EXPOSE 10000
 
 ENTRYPOINT ["dotnet", "AIStudyAssistant.API8.dll"]
