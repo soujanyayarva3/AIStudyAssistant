@@ -1,0 +1,127 @@
+<div class="subjects-page">
+
+  <!-- Header -->
+  <div class="page-header">
+    <div>
+      <h2>Subjects</h2>
+      <p>Manage all your study subjects</p>
+    </div>
+
+    <button
+      class="btn btn-primary"
+      (click)="showAddModal = true">
+
+      <i class="bi bi-plus-circle"></i>
+      Add Subject
+
+    </button>
+  </div>
+
+  <!-- Search -->
+  <div class="search-bar">
+    <input
+      type="text"
+      class="form-control"
+      placeholder="Search subject...">
+  </div>
+
+  <!-- Subjects Table -->
+  <div class="table-card">
+
+    <table class="table table-bordered table-hover">
+
+      <thead class="table-light">
+        <tr>
+          <th>#</th>
+          <th>Subject</th>
+          <th>Description</th>
+          <th width="200">Actions</th>
+        </tr>
+      </thead>
+
+      <tbody>
+
+        <tr *ngFor="let subject of subjects; let i = index">
+
+          <td>{{ i + 1 }}</td>
+
+          <td>{{ subject.subjectName }}</td>
+
+          <td>{{ subject.description }}</td>
+
+          <td>
+
+            <button
+              class="btn btn-warning btn-sm me-2"
+              (click)="editSubject(subject)">
+
+              <i class="bi bi-pencil"></i>
+
+            </button>
+
+            <button
+              class="btn btn-danger btn-sm"
+              (click)="deleteSubject(subject.subjectId)">
+
+              <i class="bi bi-trash"></i>
+
+            </button>
+
+          </td>
+
+        </tr>
+
+      </tbody>
+
+    </table>
+
+  </div>
+
+  <!-- Add Subject Form -->
+
+  <div *ngIf="showAddModal" class="card mt-4 p-4">
+
+    <h4>Add Subject</h4>
+
+    <div class="mb-3">
+
+      <label class="form-label">Subject Name</label>
+
+      <input
+        type="text"
+        class="form-control"
+        [(ngModel)]="newSubject.subjectName">
+
+    </div>
+
+    <div class="mb-3">
+
+      <label class="form-label">Description</label>
+
+      <textarea
+        class="form-control"
+        rows="3"
+        [(ngModel)]="newSubject.description">
+      </textarea>
+
+    </div>
+
+    <button
+      class="btn btn-success me-2"
+      (click)="addSubject()">
+
+      Save
+
+    </button>
+
+    <button
+      class="btn btn-secondary"
+      (click)="showAddModal = false">
+
+      Cancel
+
+    </button>
+
+  </div>
+
+</div>

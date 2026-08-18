@@ -1,0 +1,21 @@
+.layout {
+  display: flex;
+  height: calc(100vh - 70px);
+
+  background: var(--app-bg);
+}
+
+.content {
+  flex: 1;
+
+  background: var(--app-bg);
+  color: var(--app-text);
+
+  padding: 30px;
+
+  overflow: auto;
+
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
+}

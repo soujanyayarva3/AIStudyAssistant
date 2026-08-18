@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="../AIStudyAssistant.Application/AIStudyAssistant.Application.csproj" Id="1cf5fcb3-8b12-4fe1-92fb-b347f39953c6" />
+  <Project Path="../AIStudyAssistant.Domain/AIStudyAssistant.Domain.csproj" Id="ffa52c68-4f88-48a1-ae8d-109d0bb12c00" />
+  <Project Path="../AIStudyAssistant.Infrastructure/AIStudyAssistant.Infrastructure.csproj" Id="33d59088-74ab-4249-abeb-0788bd0033d2" />
+  <Project Path="AIStudyAssistant.API8.csproj" />
+</Solution>

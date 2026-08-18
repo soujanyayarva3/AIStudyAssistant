@@ -1,0 +1,100 @@
+@use '@angular/material' as mat;
+
+html {
+  height: 100%;
+
+  @include mat.theme((
+    color: (
+      primary: mat.$azure-palette,
+      tertiary: mat.$blue-palette,
+    ),
+    typography: Poppins,
+    density: 0,
+  ));
+}
+
+/* =========================
+   GLOBAL VARIABLES
+   ========================= */
+
+:root {
+  --app-bg: #f8fafc;
+  --app-card: #ffffff;
+  --app-text: #1e293b;
+  --app-muted: #64748b;
+  --app-border: #e2e8f0;
+  --app-input: #ffffff;
+}
+
+/* =========================
+   GLOBAL RESET
+   ========================= */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+
+  background: var(--app-bg);
+  color: var(--app-text);
+
+  font-family: 'Poppins', sans-serif;
+
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
+}
+
+/* =========================
+   GLOBAL APPLICATION
+   ========================= */
+
+app-root {
+  display: block;
+  min-height: 100vh;
+
+  background: var(--app-bg);
+  color: var(--app-text);
+}
+
+/* =========================
+   SCROLLBAR
+   ========================= */
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--app-bg);
+}
+
+::-webkit-scrollbar-thumb {
+  background: #94a3b8;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #64748b;
+}
+
+/* =========================
+   ANGULAR MATERIAL
+   ========================= */
+
+body {
+  --mat-sys-surface: var(--app-card);
+  --mat-sys-surface-container: var(--app-card);
+  --mat-sys-on-surface: var(--app-text);
+  --mat-sys-on-surface-variant: var(--app-muted);
+}

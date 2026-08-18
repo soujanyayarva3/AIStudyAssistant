@@ -1,0 +1,231 @@
+<div class="study-page">
+
+  <!-- Header -->
+  <div class="study-header">
+
+    <div>
+      <h2>Study Plans</h2>
+      <p>Stay organized and complete your daily learning goals.</p>
+    </div>
+
+    <button
+      class="btn btn-primary add-btn"
+      (click)="showAddModal = true">
+
+      <i class="bi bi-plus-circle"></i>
+      New Plan
+
+    </button>
+
+  </div>
+
+
+  <!-- Search -->
+  <div class="search-box">
+
+    <div class="input-group">
+
+      <span class="input-group-text">
+        <i class="bi bi-search"></i>
+      </span>
+
+      <input
+        type="text"
+        class="form-control"
+        placeholder="Search study plans...">
+
+    </div>
+
+  </div>
+
+
+  <!-- Study Plan Cards -->
+  <div class="plan-grid">
+
+    <div
+      class="plan-card"
+      *ngFor="let plan of studyPlans">
+
+      <h4>{{ plan.taskName }}</h4>
+
+      <p>
+        <strong>Target Date :</strong>
+        {{ plan.dueDate | date:'dd MMM yyyy' }}
+      </p>
+
+
+      <p>
+        <strong>Status :</strong>
+        {{ plan.status }}
+      </p>
+
+
+      <span
+        class="badge"
+        [ngClass]="{
+          'bg-success': plan.status === 'Completed',
+          'bg-warning text-dark': plan.status === 'Pending',
+          'bg-info': plan.status === 'In Progress'
+        }">
+
+        {{ plan.status }}
+
+      </span>
+
+
+      <div class="actions mt-3">
+
+        <button
+          class="btn btn-warning btn-sm me-2"
+          (click)="editPlan(plan)">
+
+          <i class="bi bi-pencil-fill"></i>
+
+        </button>
+
+
+        <button
+          class="btn btn-danger btn-sm"
+          (click)="deletePlan(plan.planId)">
+
+          <i class="bi bi-trash-fill"></i>
+
+        </button>
+
+      </div>
+
+
+    </div>
+
+
+    <!-- Empty Message -->
+    <div
+      *ngIf="studyPlans.length === 0"
+      class="text-center mt-5">
+
+      <h4>No Study Plans Found</h4>
+      <p>Create your first Study Plan.</p>
+
+    </div>
+
+
+  </div>
+
+
+
+  <!-- Add / Edit Form -->
+
+  <div
+    *ngIf="showAddModal"
+    class="card mt-4 p-4">
+
+
+    <h4>
+
+      {{ selectedPlanId === 0 ? 'Add Study Plan' : 'Edit Study Plan' }}
+
+    </h4>
+
+
+
+    <!-- Task Name -->
+
+    <div class="mb-3">
+
+      <label class="form-label">
+        Task Name
+      </label>
+
+
+      <input
+        type="text"
+        class="form-control"
+        name="taskName"
+        [(ngModel)]="newPlan.taskName"
+        required>
+
+    </div>
+
+
+
+    <!-- Due Date -->
+
+    <div class="mb-3">
+
+      <label class="form-label">
+        Due Date
+      </label>
+
+
+      <input
+        type="datetime-local"
+        class="form-control"
+        name="dueDate"
+        [(ngModel)]="newPlan.dueDate"
+        required>
+
+    </div>
+
+
+
+    <!-- Status -->
+
+    <div class="mb-3">
+
+      <label class="form-label">
+        Status
+      </label>
+
+
+      <select
+        class="form-select"
+        name="status"
+        [(ngModel)]="newPlan.status">
+
+
+        <option value="Pending">
+          Pending
+        </option>
+
+
+        <option value="In Progress">
+          In Progress
+        </option>
+
+
+        <option value="Completed">
+          Completed
+        </option>
+
+
+      </select>
+
+
+    </div>
+
+
+
+
+    <button
+      class="btn btn-success me-2"
+      (click)="savePlan()">
+
+      Save
+
+    </button>
+
+
+
+    <button
+      class="btn btn-secondary"
+      (click)="showAddModal = false">
+
+      Cancel
+
+    </button>
+
+
+  </div>
+
+
+</div>

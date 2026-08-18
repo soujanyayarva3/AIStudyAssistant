@@ -1,0 +1,49 @@
+
+# Visual Studio
+.vs/
+**/.vs/
+
+# Build output
+bin/
+**/bin/
+obj/
+**/obj/
+
+# User-specific project files
+*.csproj.user
+*.suo
+
+# Node
+node_modules/
+**/node_modules/
+
+# Angular
+.angular/
+**/.angular/
+
+# Environment / secrets
+.env
+.env.*
+!.env.example
+
+# Generated uploads
+**/Uploads/
+
+# Logs
+*.log
+# Unrelated projects
+AIStudyAssistant.API/
+AIStudyAssistant.UI/
+AgenticAI/
+AgenticWorkflowPatternApp/
+ConsoleApp1/
+ConsoleApp2/
+OnlineExamAPI/
+consoleapp11/
+
+# Backup files
+Dockerfile.WORKING-BACKUP
+docker-compose.WORKING-BACKUP.yml
+
+# Large generated/archive file
+AIStudyAssistant.API8/bin.zip

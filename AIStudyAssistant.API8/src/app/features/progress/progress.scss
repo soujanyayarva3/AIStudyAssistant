@@ -1,0 +1,68 @@
+.progress-page{
+    padding:30px;
+}
+
+.progress-header{
+    margin-bottom:30px;
+}
+
+.progress-header h2{
+    font-size:34px;
+    font-weight:700;
+}
+
+.progress-header p{
+    color:#666;
+}
+
+.stats-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:20px;
+    margin-bottom:35px;
+}
+
+.stat-card{
+    background:white;
+    border-radius:18px;
+    padding:25px;
+    text-align:center;
+    box-shadow:0 8px 20px rgba(0,0,0,.08);
+    transition:.3s;
+}
+
+.stat-card:hover{
+    transform:translateY(-5px);
+}
+
+.stat-card i{
+    font-size:40px;
+    color:#2563eb;
+}
+
+.stat-card h3{
+    margin-top:15px;
+    font-size:32px;
+    font-weight:700;
+}
+
+.stat-card span{
+    color:#666;
+}
+
+.progress-card{
+    background:white;
+    padding:30px;
+    border-radius:20px;
+    box-shadow:0 8px 20px rgba(0,0,0,.08);
+}
+
+.progress-card h4{
+    margin-bottom:10px;
+    font-weight:600;
+}
+
+.progress{
+    height:25px;
+    border-radius:20px;
+}

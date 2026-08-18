@@ -1,0 +1,6 @@
+@AIStudyAssistant.API8_HostAddress = http://localhost:5072
+
+GET {{AIStudyAssistant.API8_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

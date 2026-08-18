@@ -1,0 +1,52 @@
+.summary-page{
+    padding:30px;
+}
+
+.summary-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:30px;
+}
+
+.summary-header h2{
+    font-size:34px;
+    font-weight:700;
+}
+
+.summary-header p{
+    color:#666;
+}
+
+.summary-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(320px,1fr));
+    gap:25px;
+}
+
+.summary-card{
+    background:#fff;
+    border-radius:18px;
+    padding:25px;
+    box-shadow:0 8px 20px rgba(0,0,0,.08);
+    transition:.3s;
+}
+
+.summary-card:hover{
+    transform:translateY(-5px);
+    box-shadow:0 15px 30px rgba(0,0,0,.12);
+}
+
+.summary-card h3{
+    margin-bottom:15px;
+}
+
+.summary-card p{
+    color:#555;
+    line-height:1.7;
+    min-height:100px;
+}
+
+.summary-card small{
+    color:#888;
+}

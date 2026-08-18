@@ -1,0 +1,42 @@
+<div class="chat-container">
+
+    <h2>AI Study Assistant</h2>
+
+    <div class="input-group mb-3">
+
+        <input
+            class="form-control"
+            [(ngModel)]="question"
+            placeholder="Ask anything...">
+
+        <button
+            class="btn btn-primary"
+            (click)="askAI()">
+
+            Ask
+
+        </button>
+
+    </div>
+
+    <div class="chat-box">
+
+        <div
+            *ngFor="let chat of chats"
+            class="card p-3 mb-3">
+
+            <b>You</b>
+
+            <p>{{chat.question}}</p>
+
+            <hr>
+
+            <b>AI</b>
+
+            <p>{{chat.response}}</p>
+
+        </div>
+
+    </div>
+
+</div>

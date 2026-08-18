@@ -1,0 +1,110 @@
+.study-page{
+    padding:30px;
+    background:#f5f7fb;
+    min-height:100vh;
+}
+
+.study-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:30px;
+}
+
+.study-header h2{
+    font-size:34px;
+    font-weight:700;
+    margin-bottom:5px;
+}
+
+.study-header p{
+    color:#6c757d;
+}
+
+.add-btn{
+    border-radius:10px;
+    padding:10px 22px;
+    font-weight:600;
+}
+
+.search-box{
+    margin-bottom:30px;
+}
+
+.input-group{
+    max-width:420px;
+}
+
+.plan-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(330px,1fr));
+    gap:25px;
+}
+
+.plan-card{
+    background:#fff;
+    border-radius:18px;
+    padding:22px;
+    box-shadow:0 8px 20px rgba(0,0,0,.08);
+    transition:.3s;
+}
+
+.plan-card:hover{
+    transform:translateY(-6px);
+    box-shadow:0 15px 30px rgba(0,0,0,.12);
+}
+
+.completed{
+    border-left:6px solid #22c55e;
+}
+
+.pending{
+    border-left:6px solid #f59e0b;
+}
+
+.in-progress{
+    border-left:6px solid #06b6d4;
+}
+
+.plan-card h4{
+    font-size:24px;
+    font-weight:700;
+    margin-bottom:18px;
+}
+
+.plan-card p{
+    font-size:17px;
+    margin-bottom:10px;
+    color:#555;
+}
+
+.badge{
+    padding:8px 14px;
+    font-size:14px;
+    border-radius:20px;
+}
+
+.actions{
+    display:flex;
+    gap:12px;
+    margin-top:20px;
+}
+
+.actions button{
+    width:42px;
+    height:42px;
+    border-radius:10px;
+}
+
+@media(max-width:768px){
+
+    .study-header{
+        flex-direction:column;
+        align-items:flex-start;
+        gap:15px;
+    }
+
+    .plan-grid{
+        grid-template-columns:1fr;
+    }
+}

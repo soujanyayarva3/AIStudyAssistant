@@ -1,0 +1,261 @@
+using AIStudyAssistant.Application.Interfaces;
+using AIStudyAssistant.Application.Interfaces.Repositories;
+using AIStudyAssistant.Application.Interfaces.Services;
+using AIStudyAssistant.Domain.Identity;
+using AIStudyAssistant.Infrastructure.Data;
+using AIStudyAssistant.Infrastructure.Repositories;
+using AIStudyAssistant.Infrastructure.Services;
+using MediatR;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
+using System.Reflection;
+using System.Text;
+using System.Text.Json.Serialization;
+
+var builder = WebApplication.CreateBuilder(args);
+
+// =====================================================
+// CORS
+// =====================================================
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAngular", policy =>
+    {
+        policy
+            .WithOrigins("http://localhost:4200")
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    });
+});
+
+// =====================================================
+// DATABASE
+// =====================================================
+
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseNpgsql(
+        builder.Configuration.GetConnectionString(
+            "DefaultConnection"
+        )
+    )
+);
+
+// =====================================================
+// IDENTITY
+// =====================================================
+
+builder.Services
+    .AddIdentity<ApplicationUser, IdentityRole<int>>()
+    .AddEntityFrameworkStores<ApplicationDbContext>()
+    .AddDefaultTokenProviders();
+
+// =====================================================
+// JWT AUTHENTICATION
+// =====================================================
+
+builder.Services
+    .AddAuthentication(options =>
+    {
+        options.DefaultAuthenticateScheme =
+            JwtBearerDefaults.AuthenticationScheme;
+
+        options.DefaultChallengeScheme =
+            JwtBearerDefaults.AuthenticationScheme;
+
+        options.DefaultScheme =
+            JwtBearerDefaults.AuthenticationScheme;
+    })
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters =
+            new TokenValidationParameters
+            {
+                ValidateIssuer = true,
+                ValidateAudience = true,
+                ValidateLifetime = true,
+                ValidateIssuerSigningKey = true,
+
+                ValidIssuer =
+                    builder.Configuration["Jwt:Issuer"],
+
+                ValidAudience =
+                    builder.Configuration["Jwt:Audience"],
+
+                IssuerSigningKey =
+                    new SymmetricSecurityKey(
+                        Encoding.UTF8.GetBytes(
+                            builder.Configuration["Jwt:Key"]!
+                        )
+                    )
+            };
+    });
+
+builder.Services.AddAuthorization();
+
+// =====================================================
+// MEDIATR
+// =====================================================
+
+builder.Services.AddMediatR(
+    Assembly.Load("AIStudyAssistant.Application")
+);
+
+// =====================================================
+// REPOSITORIES
+// =====================================================
+
+builder.Services.AddScoped<ISubjectRepository, SubjectRepository>();
+
+builder.Services.AddScoped<INoteRepository, NoteRepository>();
+
+builder.Services.AddScoped<IStudyPlanRepository, StudyPlanRepository>();
+
+builder.Services.AddScoped<IAIChatRepository, AIChatRepository>();
+
+builder.Services.AddScoped<ISummaryRepository, SummaryRepository>();
+
+builder.Services.AddScoped<IQuizRepository, QuizRepository>();
+
+builder.Services.AddScoped<IProgressRepository, ProgressRepository>();
+
+builder.Services.AddScoped<IConversationRepository, ConversationRepository>();
+
+// =====================================================
+// APPLICATION SERVICES
+// =====================================================
+
+builder.Services.AddScoped<
+    IProgressCalculationService,
+    ProgressCalculationService
+>();
+
+// =====================================================
+// OCR SERVICE
+// =====================================================
+// Required by SummariesController.
+//
+// SummariesController expects OCRService through
+// constructor dependency injection. Registering it here
+// allows ASP.NET Core to create the controller.
+
+builder.Services.AddScoped<OCRService>();
+
+// =====================================================
+// EMAIL SERVICE
+// =====================================================
+
+builder.Services.AddScoped<
+    IEmailService,
+    EmailService
+>();
+
+// =====================================================
+// OLLAMA
+// =====================================================
+
+builder.Services.AddHttpClient<
+    AIStudyAssistant.Application.Services.OllamaService
+>();
+
+// =====================================================
+// CONTROLLERS
+// =====================================================
+
+builder.Services
+    .AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.ReferenceHandler =
+            ReferenceHandler.IgnoreCycles;
+    });
+
+// =====================================================
+// SWAGGER
+// =====================================================
+
+builder.Services.AddEndpointsApiExplorer();
+
+builder.Services.AddSwaggerGen(options =>
+{
+    options.AddSecurityDefinition(
+        "Bearer",
+        new OpenApiSecurityScheme
+        {
+            Name = "Authorization",
+
+            Type = SecuritySchemeType.Http,
+
+            Scheme = "Bearer",
+
+            BearerFormat = "JWT",
+
+            In = ParameterLocation.Header,
+
+            Description =
+                "Enter your JWT token"
+        }
+    );
+
+    options.AddSecurityRequirement(
+        new OpenApiSecurityRequirement
+        {
+            {
+                new OpenApiSecurityScheme
+                {
+                    Reference =
+                        new OpenApiReference
+                        {
+                            Type =
+                                ReferenceType.SecurityScheme,
+
+                            Id = "Bearer"
+                        }
+                },
+
+                Array.Empty<string>()
+            }
+        }
+    );
+});
+
+// =====================================================
+// BUILD APPLICATION
+// =====================================================
+
+var app = builder.Build();
+
+// =====================================================
+// SWAGGER
+// =====================================================
+
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+
+    app.UseSwaggerUI();
+}
+
+// =====================================================
+// HTTPS
+// =====================================================
+// HTTPS is disabled because Docker exposes HTTP 8080.
+
+// app.UseHttpsRedirection();
+
+// =====================================================
+// MIDDLEWARE
+// =====================================================
+
+app.UseCors("AllowAngular");
+
+app.UseAuthentication();
+
+app.UseAuthorization();
+
+app.MapControllers();
+
+app.Run();

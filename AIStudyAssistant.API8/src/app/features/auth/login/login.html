@@ -1,0 +1,84 @@
+<div class="login-page">
+
+  <div class="left-panel">
+    <div class="overlay">
+      <h1>AI Study Assistant</h1>
+
+      <p>
+        Learn Smarter.<br>
+        Organize Better.<br>
+        Powered by AI.
+      </p>
+
+      <div class="feature">
+        <i class="bi bi-robot"></i>
+        <span>AI Chat Assistant</span>
+      </div>
+
+      <div class="feature">
+        <i class="bi bi-journal-bookmark-fill"></i>
+        <span>Smart Notes</span>
+      </div>
+
+      <div class="feature">
+        <i class="bi bi-graph-up-arrow"></i>
+        <span>Track Progress</span>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="right-panel">
+
+    <div class="login-card">
+
+      <h2>Welcome Back 👋</h2>
+
+      <p class="subtitle">
+        Sign in to continue your learning journey
+      </p>
+
+      <!-- Email -->
+      <div class="mb-3">
+        <label>Email</label>
+
+        <input
+  type="email"
+  class="form-control"
+  placeholder="Enter your email"
+  [(ngModel)]="email"
+  name="email">
+      </div>
+
+      <!-- Password -->
+      <div class="mb-4">
+        <label>Password</label>
+<input
+  type="password"
+  class="form-control"
+  placeholder="Enter your password"
+  [(ngModel)]="password"
+  name="password">
+      </div>
+
+      <!-- Login Button -->
+     <button
+  class="btn btn-primary login-btn"
+  (click)="login()">
+  Login
+</button>
+
+      <p class="register-text">
+        Don't have an account?
+
+        <a routerLink="/register">
+          Register
+        </a>
+
+      </p>
+
+    </div>
+
+  </div>
+
+</div>

@@ -1,0 +1,52 @@
+.subjects-page{
+    padding:30px;
+}
+
+.page-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:25px;
+}
+
+.page-header h2{
+    font-size:32px;
+    font-weight:700;
+}
+
+.page-header p{
+    color:#6c757d;
+}
+
+.search-bar{
+    margin-bottom:20px;
+}
+
+.search-bar input{
+    max-width:350px;
+}
+
+.table-card{
+    background:white;
+    border-radius:18px;
+    padding:20px;
+    box-shadow:0 10px 30px rgba(0,0,0,.08);
+}
+
+table th{
+    font-weight:700;
+}
+
+table td{
+    vertical-align:middle;
+}
+
+.btn-primary{
+    border-radius:12px;
+    padding:10px 20px;
+}
+
+.btn-warning,
+.btn-danger{
+    border-radius:10px;
+}

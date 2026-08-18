@@ -1,0 +1,162 @@
+<div class="notes-page">
+
+    <!-- Header -->
+    <div class="notes-header">
+
+        <div>
+            <h2>Study Notes</h2>
+            <p>Organize, manage and learn smarter with AI-powered notes.</p>
+        </div>
+
+        <button
+            class="btn btn-primary add-btn"
+            (click)="showAddForm = true">
+
+            <i class="bi bi-plus-circle"></i>
+            Add Note
+
+        </button>
+
+    </div>
+
+    <!-- Search -->
+    <div class="search-section">
+
+        <div class="input-group">
+
+            <span class="input-group-text">
+                <i class="bi bi-search"></i>
+            </span>
+
+            <input
+                class="form-control"
+                placeholder="Search notes...">
+
+        </div>
+
+    </div>
+
+    <!-- Add / Edit Form -->
+
+    <div
+        *ngIf="showAddForm"
+        class="card mt-4 p-4">
+
+        <h4>
+
+            {{ selectedNoteId === 0 ? 'Add Note' : 'Edit Note' }}
+
+        </h4>
+
+        <input
+            class="form-control mb-3"
+            placeholder="Title"
+            [(ngModel)]="newNote.title">
+
+        <textarea
+            class="form-control mb-3"
+            placeholder="Content"
+            [(ngModel)]="newNote.content">
+        </textarea>
+
+        <select
+            class="form-select mb-3"
+            [(ngModel)]="newNote.subjectId">
+
+            <option [ngValue]="0">
+                Select Subject
+            </option>
+
+            <option
+                *ngFor="let subject of subjects"
+                [ngValue]="subject.subjectId">
+
+                {{ subject.subjectName }}
+
+            </option>
+
+        </select>
+
+        <button
+            class="btn btn-success me-2"
+            (click)="saveNote()">
+
+            {{ selectedNoteId === 0 ? 'Save Note' : 'Update Note' }}
+
+        </button>
+
+        <button
+            class="btn btn-secondary"
+            (click)="resetForm()">
+
+            Cancel
+
+        </button>
+
+    </div>
+
+    <!-- Notes -->
+
+    <div class="notes-grid">
+
+        <div
+            class="note-card"
+            *ngFor="let note of notes">
+
+            <div class="subject-tag">
+
+                Subject ID : {{ note.subjectId }}
+
+            </div>
+
+            <h4>{{ note.title }}</h4>
+
+            <p>{{ note.content }}</p>
+
+            <small>
+
+                {{ note.createdDate | date:'dd MMM yyyy' }}
+
+            </small>
+
+            <div class="actions mt-3">
+
+                <button class="btn btn-light btn-sm">
+
+                    <i class="bi bi-eye-fill"></i>
+
+                </button>
+
+                <button
+                    class="btn btn-warning btn-sm me-2"
+                    (click)="editNote(note)">
+
+                    <i class="bi bi-pencil-fill"></i>
+
+                </button>
+
+                <button
+                    class="btn btn-danger btn-sm"
+                    (click)="deleteNote(note.noteId)">
+
+                    <i class="bi bi-trash-fill"></i>
+
+                </button>
+
+            </div>
+
+        </div>
+
+        <div
+            *ngIf="notes.length === 0"
+            class="text-center mt-5">
+
+            <h4>No Notes Found</h4>
+
+            <p>Create your first note.</p>
+
+        </div>
+
+    </div>
+
+</div>
