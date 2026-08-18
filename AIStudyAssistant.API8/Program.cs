@@ -21,12 +21,16 @@ var builder = WebApplication.CreateBuilder(args);
 // CORS
 // =====================================================
 
+var frontendUrl = builder.Configuration["Frontend:Url"];
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAngular", policy =>
     {
         policy
-            .WithOrigins("http://localhost:4200")
+            .WithOrigins(
+                frontendUrl ?? "http://localhost:4200"
+            )
             .AllowAnyHeader()
             .AllowAnyMethod();
     });
@@ -109,19 +113,12 @@ builder.Services.AddMediatR(
 // =====================================================
 
 builder.Services.AddScoped<ISubjectRepository, SubjectRepository>();
-
 builder.Services.AddScoped<INoteRepository, NoteRepository>();
-
 builder.Services.AddScoped<IStudyPlanRepository, StudyPlanRepository>();
-
 builder.Services.AddScoped<IAIChatRepository, AIChatRepository>();
-
 builder.Services.AddScoped<ISummaryRepository, SummaryRepository>();
-
 builder.Services.AddScoped<IQuizRepository, QuizRepository>();
-
 builder.Services.AddScoped<IProgressRepository, ProgressRepository>();
-
 builder.Services.AddScoped<IConversationRepository, ConversationRepository>();
 
 // =====================================================
@@ -132,17 +129,6 @@ builder.Services.AddScoped<
     IProgressCalculationService,
     ProgressCalculationService
 >();
-
-// =====================================================
-// OCR SERVICE
-// =====================================================
-// Required by SummariesController.
-//
-// SummariesController expects OCRService through
-// constructor dependency injection. Registering it here
-// allows ASP.NET Core to create the controller.
-
-builder.Services.AddScoped<OCRService>();
 
 // =====================================================
 // EMAIL SERVICE
@@ -186,17 +172,11 @@ builder.Services.AddSwaggerGen(options =>
         new OpenApiSecurityScheme
         {
             Name = "Authorization",
-
             Type = SecuritySchemeType.Http,
-
             Scheme = "Bearer",
-
             BearerFormat = "JWT",
-
             In = ParameterLocation.Header,
-
-            Description =
-                "Enter your JWT token"
+            Description = "Enter your JWT token"
         }
     );
 
@@ -235,15 +215,10 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-
     app.UseSwaggerUI();
 }
 
-// =====================================================
-// HTTPS
-// =====================================================
-// HTTPS is disabled because Docker exposes HTTP 8080.
-
+// HTTPS disabled because Docker uses HTTP
 // app.UseHttpsRedirection();
 
 // =====================================================
