@@ -1,4 +1,5 @@
-﻿using System.Net.Http.Json;
+﻿using System.Net.Http.Headers;
+using System.Net.Http.Json;
 using System.Text.Json;
 using Microsoft.Extensions.Configuration;
 
@@ -7,6 +8,13 @@ namespace AIStudyAssistant.Application.Services;
 public class OllamaService
 {
     private readonly HttpClient _httpClient;
+    private readonly string _apiKey;
+
+    private const string GroqUrl =
+        "https://api.groq.com/openai/v1/chat/completions";
+
+    private const string Model =
+        "llama-3.3-70b-versatile";
 
     public OllamaService(
         HttpClient httpClient,
@@ -14,33 +22,42 @@ public class OllamaService
     {
         _httpClient = httpClient;
 
-        // =====================================================
-        // OLLAMA URL
-        // =====================================================
-        //
-        // Local Docker:
-        // http://host.docker.internal:11434/
-        //
-        // Render:
-        // Set Ollama:BaseUrl as an environment variable/configuration
-        // to a publicly reachable Ollama endpoint.
-        //
-        var ollamaUrl =
-            configuration["Ollama:BaseUrl"]
-            ?? "http://host.docker.internal:11434/";
+        _apiKey =
+            configuration["Groq:ApiKey"]
+            ?? configuration["Groq__ApiKey"]
+            ?? string.Empty;
 
-        if (!ollamaUrl.EndsWith("/"))
+        if (string.IsNullOrWhiteSpace(_apiKey))
         {
-            ollamaUrl += "/";
+            throw new InvalidOperationException(
+                "Groq API key is not configured. " +
+                "Set the Groq__ApiKey environment variable."
+            );
         }
-
-        _httpClient.BaseAddress = new Uri(ollamaUrl);
 
         _httpClient.Timeout =
             TimeSpan.FromMinutes(5);
 
+        _httpClient.DefaultRequestHeaders.Authorization =
+            new AuthenticationHeaderValue(
+                "Bearer",
+                _apiKey
+            );
+
         Console.WriteLine(
-            $"OLLAMA BASE URL: {ollamaUrl}"
+            "=========================================="
+        );
+
+        Console.WriteLine(
+            "GROQ AI SERVICE INITIALIZED"
+        );
+
+        Console.WriteLine(
+            $"Model: {Model}"
+        );
+
+        Console.WriteLine(
+            "=========================================="
         );
     }
 
@@ -53,18 +70,22 @@ public class OllamaService
     {
         var request = new
         {
-            model = "llama3.2:latest",
+            model = Model,
 
-            prompt = prompt,
-
-            stream = false,
-
-            options = new
+            messages = new[]
             {
-                temperature = 0.7,
+                new
+                {
+                    role = "user",
+                    content = prompt
+                }
+            },
 
-                num_predict = 500
-            }
+            temperature = 0.7,
+
+            max_tokens = 1000,
+
+            stream = false
         };
 
         Console.WriteLine();
@@ -73,7 +94,7 @@ public class OllamaService
         );
 
         Console.WriteLine(
-            "Calling Ollama..."
+            "Calling Groq..."
         );
 
         HttpResponseMessage response;
@@ -82,14 +103,14 @@ public class OllamaService
         {
             response =
                 await _httpClient.PostAsJsonAsync(
-                    "api/generate",
+                    GroqUrl,
                     request
                 );
         }
         catch (HttpRequestException ex)
         {
             Console.WriteLine(
-                "OLLAMA CONNECTION ERROR:"
+                "GROQ CONNECTION ERROR:"
             );
 
             Console.WriteLine(
@@ -97,23 +118,64 @@ public class OllamaService
             );
 
             throw new Exception(
-                "Unable to connect to the configured AI service.",
+                "Unable to connect to the Groq AI service.",
                 ex
             );
         }
 
         Console.WriteLine(
-            $"OLLAMA STATUS: {response.StatusCode}"
+            $"GROQ STATUS: {response.StatusCode}"
         );
 
-        response.EnsureSuccessStatusCode();
+        var responseText =
+            await response.Content.ReadAsStringAsync();
 
-        var result =
-            await response.Content
-                .ReadFromJsonAsync<OllamaResponse>();
+        if (!response.IsSuccessStatusCode)
+        {
+            Console.WriteLine(
+                "GROQ ERROR RESPONSE:"
+            );
 
-        return result?.response?.Trim()
-               ?? "No response";
+            Console.WriteLine(
+                responseText
+            );
+
+            throw new Exception(
+                $"Groq API returned {(int)response.StatusCode}: " +
+                responseText
+            );
+        }
+
+        try
+        {
+            using var document =
+                JsonDocument.Parse(responseText);
+
+            var content =
+                document.RootElement
+                    .GetProperty("choices")[0]
+                    .GetProperty("message")
+                    .GetProperty("content")
+                    .GetString();
+
+            return content?.Trim()
+                   ?? "No response";
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(
+                "INVALID GROQ RESPONSE:"
+            );
+
+            Console.WriteLine(
+                responseText
+            );
+
+            throw new Exception(
+                "Unable to read the response from Groq.",
+                ex
+            );
+        }
     }
 
     // =====================================================
@@ -129,14 +191,16 @@ public class OllamaService
 
         var oldQuestions =
             previousQuestions?
-                .Where(q => !string.IsNullOrWhiteSpace(q))
+                .Where(q =>
+                    !string.IsNullOrWhiteSpace(q))
                 .Select(q => q.Trim())
-                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .Distinct(
+                    StringComparer.OrdinalIgnoreCase)
                 .ToList()
             ?? new List<string>();
 
         // =====================================================
-        // BUILD PREVIOUS QUESTION LIST
+        // PREVIOUS QUESTIONS
         // =====================================================
 
         var previousQuestionText =
@@ -159,13 +223,14 @@ public class OllamaService
 
             $"Topic: {topic}\n\n" +
 
-            $"Generate EXACTLY {totalQuestions} NEW and DIFFERENT multiple-choice questions about this topic.\n\n" +
+            $"Generate EXACTLY {totalQuestions} NEW and DIFFERENT " +
+            "multiple-choice questions about this topic.\n\n" +
 
             "VERY IMPORTANT:\n" +
 
             "- Every generated question MUST be new.\n" +
             "- DO NOT repeat any question from the previous question list.\n" +
-            "- Do not merely change punctuation or capitalization of an old question.\n" +
+            "- Do not merely change punctuation or capitalization.\n" +
             "- Do not generate the same concept using almost identical wording.\n" +
             "- Generate questions from different concepts of the topic.\n" +
             "- Each question must have exactly 4 options.\n" +
@@ -175,14 +240,16 @@ public class OllamaService
             "- correctAnswer MUST correspond to the correct option.\n" +
             "- Do not provide explanations.\n" +
             "- Do not provide markdown.\n" +
-            "- Do not add any text outside the JSON.\n\n" +
+            "- Return ONLY valid JSON.\n\n" +
 
             "PREVIOUS QUESTIONS - DO NOT REPEAT THESE:\n" +
             "------------------------------------------\n" +
+
             previousQuestionText +
+
             "\n------------------------------------------\n\n" +
 
-            "The final JSON MUST contain exactly this structure:\n\n" +
+            "Return EXACTLY this JSON structure:\n\n" +
 
             "{\n" +
             "  \"questions\": [\n" +
@@ -200,102 +267,41 @@ public class OllamaService
             $"Generate exactly {totalQuestions} NEW questions.";
 
         // =====================================================
-        // JSON SCHEMA
-        // =====================================================
-
-        var format = new
-        {
-            type = "object",
-
-            properties = new
-            {
-                questions = new
-                {
-                    type = "array",
-
-                    items = new
-                    {
-                        type = "object",
-
-                        properties = new
-                        {
-                            question = new
-                            {
-                                type = "string"
-                            },
-
-                            optionA = new
-                            {
-                                type = "string"
-                            },
-
-                            optionB = new
-                            {
-                                type = "string"
-                            },
-
-                            optionC = new
-                            {
-                                type = "string"
-                            },
-
-                            optionD = new
-                            {
-                                type = "string"
-                            },
-
-                            correctAnswer = new
-                            {
-                                type = "string",
-
-                                @enum = new[]
-                                {
-                                    "A",
-                                    "B",
-                                    "C",
-                                    "D"
-                                }
-                            }
-                        },
-
-                        required = new[]
-                        {
-                            "question",
-                            "optionA",
-                            "optionB",
-                            "optionC",
-                            "optionD",
-                            "correctAnswer"
-                        }
-                    }
-                }
-            },
-
-            required = new[]
-            {
-                "questions"
-            }
-        };
-
-        // =====================================================
-        // OLLAMA REQUEST
+        // GROQ REQUEST
         // =====================================================
 
         var request = new
         {
-            model = "llama3.2:latest",
+            model = Model,
 
-            prompt = prompt,
+            messages = new[]
+            {
+                new
+                {
+                    role = "system",
+
+                    content =
+                        "You generate valid JSON only. " +
+                        "Never use markdown or explanatory text."
+                },
+
+                new
+                {
+                    role = "user",
+
+                    content = prompt
+                }
+            },
+
+            temperature = 0.2,
+
+            max_tokens = 3000,
 
             stream = false,
 
-            format = format,
-
-            options = new
+            response_format = new
             {
-                temperature = 0.2,
-
-                num_predict = 2500
+                type = "json_object"
             }
         };
 
@@ -317,11 +323,11 @@ public class OllamaService
         );
 
         Console.WriteLine(
-            "Model: llama3.2:latest"
+            $"Model: {Model}"
         );
 
         Console.WriteLine(
-            "JSON schema enforcement: ENABLED"
+            "JSON mode: ENABLED"
         );
 
         Console.WriteLine(
@@ -338,14 +344,14 @@ public class OllamaService
         {
             response =
                 await _httpClient.PostAsJsonAsync(
-                    "api/generate",
+                    GroqUrl,
                     request
                 );
         }
         catch (HttpRequestException ex)
         {
             Console.WriteLine(
-                "OLLAMA CONNECTION ERROR:"
+                "GROQ CONNECTION ERROR:"
             );
 
             Console.WriteLine(
@@ -353,28 +359,73 @@ public class OllamaService
             );
 
             throw new Exception(
-                "Unable to connect to the configured AI service.",
+                "Unable to connect to the Groq AI service.",
                 ex
             );
         }
 
         Console.WriteLine(
-            $"OLLAMA STATUS: {response.StatusCode}"
+            $"GROQ STATUS: {response.StatusCode}"
         );
 
-        response.EnsureSuccessStatusCode();
+        var responseText =
+            await response.Content.ReadAsStringAsync();
 
-        var result =
-            await response.Content
-                .ReadFromJsonAsync<OllamaResponse>();
+        if (!response.IsSuccessStatusCode)
+        {
+            Console.WriteLine(
+                "GROQ ERROR RESPONSE:"
+            );
 
-        var answer =
-            result?.response?.Trim()
-            ?? string.Empty;
+            Console.WriteLine(
+                responseText
+            );
+
+            throw new Exception(
+                $"Groq API returned {(int)response.StatusCode}: " +
+                responseText
+            );
+        }
+
+        // =====================================================
+        // EXTRACT AI CONTENT
+        // =====================================================
+
+        string answer;
+
+        try
+        {
+            using var groqDocument =
+                JsonDocument.Parse(responseText);
+
+            answer =
+                groqDocument.RootElement
+                    .GetProperty("choices")[0]
+                    .GetProperty("message")
+                    .GetProperty("content")
+                    .GetString()
+                    ?.Trim()
+                    ?? string.Empty;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(
+                "INVALID GROQ RESPONSE:"
+            );
+
+            Console.WriteLine(
+                responseText
+            );
+
+            throw new Exception(
+                "Unable to read quiz response from Groq.",
+                ex
+            );
+        }
 
         Console.WriteLine();
         Console.WriteLine(
-            "========== RAW OLLAMA RESPONSE =========="
+            "========== RAW GROQ RESPONSE =========="
         );
 
         Console.WriteLine(
@@ -382,13 +433,13 @@ public class OllamaService
         );
 
         Console.WriteLine(
-            "=========================================="
+            "========================================"
         );
 
         if (string.IsNullOrWhiteSpace(answer))
         {
             throw new Exception(
-                "Ollama returned an empty quiz response."
+                "Groq returned an empty quiz response."
             );
         }
 
@@ -409,7 +460,15 @@ public class OllamaService
                     out var questions))
             {
                 throw new Exception(
-                    "Ollama response does not contain 'questions'."
+                    "Groq response does not contain 'questions'."
+                );
+            }
+
+            if (questions.ValueKind !=
+                JsonValueKind.Array)
+            {
+                throw new Exception(
+                    "'questions' must be a JSON array."
                 );
             }
 
@@ -423,15 +482,18 @@ public class OllamaService
             if (count < totalQuestions)
             {
                 throw new Exception(
-                    $"AI generated only {count} questions. Expected {totalQuestions}."
+                    $"AI generated only {count} questions. " +
+                    $"Expected {totalQuestions}."
                 );
             }
 
             // =================================================
-            // VALIDATE EVERY QUESTION
+            // VALIDATE QUESTIONS
             // =================================================
 
-            for (int i = 0; i < totalQuestions; i++)
+            for (int i = 0;
+                 i < totalQuestions;
+                 i++)
             {
                 var question =
                     questions[i];
@@ -481,28 +543,32 @@ public class OllamaService
                     );
                 }
 
-                if (string.IsNullOrWhiteSpace(optionA))
+                if (string.IsNullOrWhiteSpace(
+                    optionA))
                 {
                     throw new Exception(
                         $"Question {i + 1} has an empty Option A."
                     );
                 }
 
-                if (string.IsNullOrWhiteSpace(optionB))
+                if (string.IsNullOrWhiteSpace(
+                    optionB))
                 {
                     throw new Exception(
                         $"Question {i + 1} has an empty Option B."
                     );
                 }
 
-                if (string.IsNullOrWhiteSpace(optionC))
+                if (string.IsNullOrWhiteSpace(
+                    optionC))
                 {
                     throw new Exception(
                         $"Question {i + 1} has an empty Option C."
                     );
                 }
 
-                if (string.IsNullOrWhiteSpace(optionD))
+                if (string.IsNullOrWhiteSpace(
+                    optionD))
                 {
                     throw new Exception(
                         $"Question {i + 1} has an empty Option D."
@@ -515,12 +581,14 @@ public class OllamaService
                     correctAnswer != "D")
                 {
                     throw new Exception(
-                        $"Question {i + 1} has invalid correctAnswer: '{correctAnswer}'."
+                        $"Question {i + 1} has invalid " +
+                        $"correctAnswer: '{correctAnswer}'."
                     );
                 }
 
                 Console.WriteLine(
-                    $"Question {i + 1}: CorrectAnswer = {correctAnswer}"
+                    $"Question {i + 1}: " +
+                    $"CorrectAnswer = {correctAnswer}"
                 );
             }
 
@@ -540,7 +608,7 @@ public class OllamaService
         catch (JsonException ex)
         {
             Console.WriteLine(
-                "INVALID JSON FROM OLLAMA:"
+                "INVALID JSON FROM GROQ:"
             );
 
             Console.WriteLine(
@@ -548,7 +616,7 @@ public class OllamaService
             );
 
             throw new Exception(
-                "Ollama returned invalid quiz JSON.",
+                "Groq returned invalid quiz JSON.",
                 ex
             );
         }
@@ -575,14 +643,5 @@ public class OllamaService
             .GetString()
             ?.Trim()
             ?? string.Empty;
-    }
-
-    // =====================================================
-    // OLLAMA RESPONSE
-    // =====================================================
-
-    private class OllamaResponse
-    {
-        public string response { get; set; } = string.Empty;
     }
 }
