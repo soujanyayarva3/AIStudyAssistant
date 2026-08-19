@@ -212,11 +212,12 @@ var app = builder.Build();
 // SWAGGER
 // =====================================================
 
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+// =====================================================
+// SWAGGER
+// =====================================================
+
+app.UseSwagger();
+app.UseSwaggerUI();
 
 // HTTPS disabled because Docker uses HTTP
 // app.UseHttpsRedirection();
