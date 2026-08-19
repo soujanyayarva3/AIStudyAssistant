@@ -22,16 +22,19 @@ public class OllamaService
     {
         _httpClient = httpClient;
 
+        // =====================================================
+        // GROQ API KEY
+        // =====================================================
+
         _apiKey =
-            configuration["Groq:ApiKey"]
-            ?? configuration["Groq__ApiKey"]
+            configuration["GROQ_API_KEY"]
             ?? string.Empty;
 
         if (string.IsNullOrWhiteSpace(_apiKey))
         {
             throw new InvalidOperationException(
                 "Groq API key is not configured. " +
-                "Set the Groq__ApiKey environment variable."
+                "Set the GROQ_API_KEY environment variable."
             );
         }
 
@@ -44,6 +47,7 @@ public class OllamaService
                 _apiKey
             );
 
+        Console.WriteLine();
         Console.WriteLine(
             "=========================================="
         );
@@ -193,7 +197,8 @@ public class OllamaService
             previousQuestions?
                 .Where(q =>
                     !string.IsNullOrWhiteSpace(q))
-                .Select(q => q.Trim())
+                .Select(q =>
+                    q.Trim())
                 .Distinct(
                     StringComparer.OrdinalIgnoreCase)
                 .ToList()
@@ -488,12 +493,13 @@ public class OllamaService
             }
 
             // =================================================
-            // VALIDATE QUESTIONS
+            // VALIDATE EVERY QUESTION
             // =================================================
 
-            for (int i = 0;
-                 i < totalQuestions;
-                 i++)
+            for (
+                int i = 0;
+                i < totalQuestions;
+                i++)
             {
                 var question =
                     questions[i];
