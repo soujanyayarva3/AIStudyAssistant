@@ -138,7 +138,23 @@ builder.Services.AddScoped<
 >();
 
 // =====================================================
-// OLLAMA
+// OCR SERVICE
+// =====================================================
+
+// IMPORTANT:
+// SummariesController requires OCRService.
+// Without this registration Render throws:
+//
+// Unable to resolve service for type
+// 'AIStudyAssistant.Infrastructure.Services.OCRService'
+//
+// while attempting to activate
+// 'AIStudyAssistant.API.Controllers.SummariesController'
+
+builder.Services.AddScoped<OCRService>();
+
+// =====================================================
+// OLLAMA / AI SERVICE
 // =====================================================
 
 builder.Services.AddHttpClient<
@@ -220,52 +236,22 @@ app.UseSwaggerUI(options =>
 });
 
 // =====================================================
-// EXPLICIT CORS PREFLIGHT HANDLER
-// =====================================================
-
-app.Use(async (context, next) =>
-{
-    var origin = context.Request.Headers.Origin.ToString();
-
-    var allowedOrigins = new[]
-    {
-        "https://aistudyassistant-ui.onrender.com",
-        "http://localhost:4200"
-    };
-
-    if (
-        context.Request.Method.Equals(
-            "OPTIONS",
-            StringComparison.OrdinalIgnoreCase
-        ) &&
-        allowedOrigins.Contains(origin)
-    )
-    {
-        context.Response.Headers["Access-Control-Allow-Origin"] = origin;
-        context.Response.Headers["Access-Control-Allow-Methods"] =
-            "GET, POST, PUT, DELETE, PATCH, OPTIONS";
-        context.Response.Headers["Access-Control-Allow-Headers"] =
-            "Content-Type, Authorization";
-        context.Response.Headers["Access-Control-Max-Age"] =
-            "86400";
-
-        context.Response.StatusCode = StatusCodes.Status204NoContent;
-
-        return;
-    }
-
-    await next();
-});
-
-// =====================================================
 // MIDDLEWARE
 // =====================================================
 
-// HTTPS disabled because Render/Docker uses HTTP internally.
+// Render terminates HTTPS at its proxy.
+// The container itself receives HTTP.
+// Therefore HTTPS redirection is disabled.
+//
 // app.UseHttpsRedirection();
 
 app.UseRouting();
 
+// =====================================================
+// CORS
+// =====================================================
+
+// This handles normal requests AND preflight OPTIONS requests.
 app.UseCors(CorsPolicyName);
 
 app.UseAuthentication();
