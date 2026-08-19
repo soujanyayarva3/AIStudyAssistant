@@ -1,0 +1,861 @@
+
+<!-- =====================================================
+     SUMMARY DETAILS
+     ===================================================== -->
+
+<h3>
+  Summary Details
+</h3>
+
+<p>
+  Give your summary a meaningful title so you can find it later.
+</p>
+
+<label for="summaryTitle">
+  Summary Title
+  <span>*</span>
+</label>
+
+<input
+  id="summaryTitle"
+  type="text"
+  class="form-control"
+  placeholder="Example: Computer Networks - OSI Model"
+  maxlength="150"
+  [(ngModel)]="title"
+/>
+
+
+<!-- =====================================================
+     CHOOSE SOURCE
+     ===================================================== -->
+
+<h3>
+  Choose Source
+</h3>
+
+<p>
+  Select the material you want AI to summarize.
+</p>
+
+<div class="source-options">
+
+  <!-- TEXT -->
+
+  <label
+    class="source-option"
+    [class.selected]="selectedSource === 'text'"
+  >
+
+    <input
+      type="radio"
+      name="source"
+      value="text"
+      [(ngModel)]="selectedSource"
+    />
+
+    <span class="source-icon">
+      📝
+    </span>
+
+    <span>
+
+      <strong>
+        Paste Text
+      </strong>
+
+      <small>
+        Paste your notes or study material.
+      </small>
+
+    </span>
+
+  </label>
+
+
+  <!-- IMAGE -->
+
+  <label
+    class="source-option"
+    [class.selected]="selectedSource === 'image'"
+  >
+
+    <input
+      type="radio"
+      name="source"
+      value="image"
+      [(ngModel)]="selectedSource"
+    />
+
+    <span class="source-icon">
+      🖼️
+    </span>
+
+    <span>
+
+      <strong>
+        Upload Image
+      </strong>
+
+      <small>
+        Extract text from an image using OCR.
+      </small>
+
+    </span>
+
+  </label>
+
+
+  <!-- PDF -->
+
+  <label
+    class="source-option"
+    [class.selected]="selectedSource === 'pdf'"
+  >
+
+    <input
+      type="radio"
+      name="source"
+      value="pdf"
+      [(ngModel)]="selectedSource"
+    />
+
+    <span class="source-icon">
+      📄
+    </span>
+
+    <span>
+
+      <strong>
+        Upload PDF
+      </strong>
+
+      <small>
+        Summarize text from a PDF document.
+      </small>
+
+    </span>
+
+  </label>
+
+</div>
+
+
+<!-- =====================================================
+     SUMMARY STYLE
+     ===================================================== -->
+
+<h3>
+  Summary Style
+</h3>
+
+<p>
+  Choose how you want the AI to explain the material.
+</p>
+
+<select
+  class="form-select"
+  [(ngModel)]="summaryStyle"
+>
+
+  <option value="revision">
+    📚 Exam Revision
+  </option>
+
+  <option value="easy">
+    😊 Easy Explanation
+  </option>
+
+  <option value="interview">
+    💼 Interview Preparation
+  </option>
+
+</select>
+
+
+<!-- =====================================================
+     TEXT SOURCE
+     ===================================================== -->
+
+<div *ngIf="selectedSource === 'text'">
+
+  <h3>
+    📝 Paste Notes
+  </h3>
+
+  <span>
+    Text
+  </span>
+
+  <textarea
+    class="form-control"
+    rows="12"
+    placeholder="Paste your study material here..."
+    [(ngModel)]="originalText"
+  ></textarea>
+
+</div>
+
+
+<!-- =====================================================
+     IMAGE SOURCE
+     ===================================================== -->
+
+<div *ngIf="selectedSource === 'image'">
+
+  <h3>
+    🖼️ Upload Image
+  </h3>
+
+  <span>
+    Image
+  </span>
+
+  <input
+    type="file"
+    class="form-control"
+    accept="image/*"
+    (change)="onImageSelected($event)"
+  />
+
+  <div
+    *ngIf="imagePreview"
+    class="image-preview-container"
+  >
+
+    <p>
+      Image Preview
+    </p>
+
+    <img
+      [src]="imagePreview"
+      class="preview-image"
+      alt="Selected image"
+    />
+
+  </div>
+
+</div>
+
+
+<!-- =====================================================
+     PDF SOURCE
+     ===================================================== -->
+
+<div *ngIf="selectedSource === 'pdf'">
+
+  <h3>
+    📄 Upload PDF
+  </h3>
+
+  <span>
+    PDF
+  </span>
+
+  <input
+    type="file"
+    class="form-control"
+    accept=".pdf,application/pdf"
+    (change)="onPdfSelected($event)"
+  />
+
+  <div
+    class="selected-file"
+    *ngIf="selectedPdf"
+  >
+
+    📄
+
+    <span>
+      {{ selectedPdf.name }}
+    </span>
+
+  </div>
+
+</div>
+
+
+<!-- =====================================================
+     GENERATE BUTTON
+     ===================================================== -->
+
+<button
+  type="button"
+  class="generate-btn"
+  (click)="generateSummary()"
+  [disabled]="loading"
+>
+
+  <span *ngIf="!loading">
+    ✨ Generate Summary
+  </span>
+
+  <span
+    *ngIf="loading"
+    class="loading-content"
+  >
+
+    <span class="button-spinner"></span>
+
+    Generating...
+
+  </span>
+
+</button>
+
+
+<!-- =====================================================
+     GENERATED RESULT
+     ===================================================== -->
+
+<div
+  *ngIf="summaryResult"
+  class="summary-result"
+>
+
+  <!-- RESULT HEADER -->
+
+  <div class="result-header">
+
+    <div>
+
+      <span class="result-label">
+        AI GENERATED REPORT
+      </span>
+
+      <h2>
+        {{ title }}
+      </h2>
+
+      <p>
+
+        {{
+          summaryStyle === 'revision'
+            ? '📚 Exam Revision'
+            : summaryStyle === 'easy'
+              ? '😊 Easy Explanation'
+              : '💼 Interview Preparation'
+        }}
+
+      </p>
+
+    </div>
+
+    <div class="result-icon">
+      🤖
+    </div>
+
+  </div>
+
+
+  <!-- SUMMARY -->
+
+  <div class="result-section">
+
+    <h3>
+      📝 Summary
+    </h3>
+
+    <div class="result-box">
+      {{ summaryResult.summary }}
+    </div>
+
+  </div>
+
+
+  <!-- KEYWORDS -->
+
+  <div class="result-section">
+
+    <h3>
+      📌 Key Concepts
+    </h3>
+
+    <div
+      class="keyword-container"
+      *ngIf="summaryResult.keywords?.length"
+    >
+
+      <span
+        class="keyword"
+        *ngFor="let keyword of summaryResult.keywords"
+      >
+
+        {{ keyword }}
+
+      </span>
+
+    </div>
+
+    <p
+      class="empty-result"
+      *ngIf="!summaryResult.keywords?.length"
+    >
+
+      No keywords generated.
+
+    </p>
+
+  </div>
+
+
+  <!-- QUESTIONS -->
+
+  <div class="result-section">
+
+    <h3>
+      ❓ Viva Questions
+    </h3>
+
+    <ol
+      class="questions-list"
+      *ngIf="summaryResult.questions?.length"
+    >
+
+      <li
+        *ngFor="let question of summaryResult.questions"
+      >
+
+        {{ question }}
+
+      </li>
+
+    </ol>
+
+    <p
+      class="empty-result"
+      *ngIf="!summaryResult.questions?.length"
+    >
+
+      No viva questions generated.
+
+    </p>
+
+  </div>
+
+
+  <!-- SAVE TO NOTES -->
+
+  <button
+    type="button"
+    class="save-note-btn"
+    (click)="openSaveNotes()"
+  >
+
+    💾 Save Summary to Notes
+
+  </button>
+
+</div>
+
+
+<!-- =====================================================
+     SAVED REPORTS
+     ===================================================== -->
+
+<div class="reports-header">
+
+  <div>
+
+    <span class="section-label">
+      YOUR LIBRARY
+    </span>
+
+    <h2>
+      📂 Saved Reports
+    </h2>
+
+    <p>
+      Find and manage all your generated study summaries.
+    </p>
+
+  </div>
+
+  <div class="report-count">
+
+    {{ savedReports.length }}
+
+    {{
+      savedReports.length === 1
+        ? 'Report'
+        : 'Reports'
+    }}
+
+  </div>
+
+</div>
+
+
+<!-- SEARCH -->
+
+<div class="report-search">
+
+  <span>
+    🔍
+  </span>
+
+  <input
+    type="text"
+    placeholder="Search reports by title, style or file name..."
+    [(ngModel)]="reportSearchText"
+    (input)="filterReports()"
+  />
+
+  <button
+    type="button"
+    *ngIf="reportSearchText"
+    (click)="reportSearchText=''; filterReports()"
+  >
+
+    ✕
+
+  </button>
+
+</div>
+
+
+<!-- NO REPORTS -->
+
+<div
+  class="no-reports"
+  *ngIf="filteredReports.length === 0"
+>
+
+  <div class="no-reports-icon">
+    📂
+  </div>
+
+  <h3>
+
+    {{
+      reportSearchText
+        ? 'No reports found'
+        : 'No saved reports yet'
+    }}
+
+  </h3>
+
+  <p>
+
+    {{
+      reportSearchText
+        ? 'Try a different search term.'
+        : 'Generate your first AI study summary.'
+    }}
+
+  </p>
+
+</div>
+
+
+<!-- REPORT CARDS -->
+
+<div
+  class="report-card"
+  *ngFor="let report of filteredReports"
+>
+
+  <div class="report-card-top">
+
+    <div class="report-file-icon">
+      📄
+    </div>
+
+    <div class="report-info">
+
+      <h3>
+        {{ report.title || 'Untitled Summary' }}
+      </h3>
+
+      <p>
+        {{ report.fileName || 'AI Generated Study Report' }}
+      </p>
+
+    </div>
+
+  </div>
+
+
+  <div class="report-meta">
+
+    <!-- STYLE -->
+
+    <div class="meta-item">
+
+      <span class="meta-label">
+        Style
+      </span>
+
+      <span class="meta-value style-badge">
+
+        {{
+          report.summaryStyle === 'revision'
+            ? '📚 Exam Revision'
+            : report.summaryStyle === 'easy'
+              ? '😊 Easy Explanation'
+              : report.summaryStyle === 'interview'
+                ? '💼 Interview Preparation'
+                : report.summaryStyle
+        }}
+
+      </span>
+
+    </div>
+
+
+    <!-- SUBJECT -->
+
+    
+
+    <!-- DATE -->
+
+    <div
+      class="meta-item"
+      *ngIf="report.createdDate"
+    >
+
+      <span class="meta-label">
+        Created
+      </span>
+
+      <span class="meta-value">
+
+        {{
+          report.createdDate
+            | date:'dd MMM yyyy, hh:mm a'
+        }}
+
+      </span>
+
+    </div>
+
+  </div>
+
+
+  <!-- ACTIONS -->
+
+  <div class="report-actions">
+
+    <button
+      type="button"
+      class="download-btn"
+      (click)="downloadReport(report)"
+    >
+
+      ⬇️ Download
+
+    </button>
+
+    <button
+      type="button"
+      class="delete-report-btn"
+      (click)="deleteReport(report.summaryId)"
+    >
+
+      🗑️ Delete
+
+    </button>
+
+  </div>
+
+</div>
+
+
+<!-- =====================================================
+     SAVE TO NOTES POPUP
+     ===================================================== -->
+
+<div
+  class="save-notes-overlay"
+  *ngIf="showSaveNotesModal"
+  (click)="closeSaveNotes()"
+>
+
+  <div
+    class="save-notes-modal"
+    (click)="$event.stopPropagation()"
+  >
+
+    <!-- HEADER -->
+
+    <div class="modal-header">
+
+      <div>
+
+        <span class="modal-label">
+          SAVE YOUR SUMMARY
+        </span>
+
+        <h2>
+          💾 Save to Notes
+        </h2>
+
+        <p>
+          Choose the subject for this note.
+        </p>
+
+      </div>
+
+      <button
+        type="button"
+        class="modal-close-btn"
+        (click)="closeSaveNotes()"
+        [disabled]="savingNote"
+      >
+
+        ✕
+
+      </button>
+
+    </div>
+
+
+    <!-- NOTE TITLE -->
+
+    <div class="note-preview">
+
+      <span>
+        NOTE TITLE
+      </span>
+
+      <strong>
+        {{ title }}
+      </strong>
+
+    </div>
+
+
+    <!-- SUBJECT SELECT -->
+
+    <div class="subject-selection">
+
+      <label for="noteSubject">
+
+        Subject
+
+        <span>
+          *
+        </span>
+
+      </label>
+
+      <select
+        id="noteSubject"
+        class="form-select"
+        [(ngModel)]="selectedSubjectId"
+        [disabled]="savingNote"
+      >
+
+        <option [ngValue]="0">
+          -- Select Subject --
+        </option>
+
+        <option
+          *ngFor="let subject of subjects"
+          [ngValue]="subject.subjectId"
+        >
+
+          {{ subject.subjectName }}
+
+        </option>
+
+      </select>
+
+      <small>
+        The note will be linked to this subject.
+      </small>
+
+    </div>
+
+
+    <!-- SUMMARY INFO -->
+
+    <div class="modal-summary-info">
+
+      <div>
+
+        <span>
+          SUMMARY STYLE
+        </span>
+
+        <strong>
+
+          {{
+            summaryStyle === 'revision'
+              ? '📚 Exam Revision'
+              : summaryStyle === 'easy'
+                ? '😊 Easy Explanation'
+                : '💼 Interview Preparation'
+          }}
+
+        </strong>
+
+      </div>
+
+
+      <div>
+
+        <span>
+          CONTENT
+        </span>
+
+        <strong>
+          AI Generated Summary
+        </strong>
+
+      </div>
+
+    </div>
+
+
+    <!-- ACTIONS -->
+
+    <div class="modal-actions">
+
+      <button
+        type="button"
+        class="modal-cancel-btn"
+        (click)="closeSaveNotes()"
+        [disabled]="savingNote"
+      >
+
+        Cancel
+
+      </button>
+
+
+      <button
+        type="button"
+        class="modal-save-btn"
+        (click)="saveToNotes()"
+        [disabled]="
+          savingNote ||
+          !selectedSubjectId
+        "
+      >
+
+        <span *ngIf="!savingNote">
+
+          💾 Save to Notes
+
+        </span>
+
+        <span
+          *ngIf="savingNote"
+          class="saving-content"
+        >
+
+          <span class="button-spinner"></span>
+
+          Saving...
+
+        </span>
+
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+

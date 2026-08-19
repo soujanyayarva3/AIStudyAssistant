@@ -1,0 +1,105 @@
+<div class="dashboard">
+
+    <h2>Welcome Back, Soujanya 👋</h2>
+
+    <p class="subtitle">
+        Here's your learning progress today.
+    </p>
+
+    <!-- Statistics Cards -->
+
+    <div class="cards">
+
+        <div class="card">
+            <i class="bi bi-book-fill"></i>
+            <h3>{{ totalSubjects }}</h3>
+            <span>Subjects</span>
+        </div>
+
+        <div class="card">
+            <i class="bi bi-journal-text"></i>
+            <h3>{{ totalNotes }}</h3>
+            <span>Notes</span>
+        </div>
+
+        <div class="card">
+            <i class="bi bi-calendar-check"></i>
+            <h3>{{ totalStudyPlans }}</h3>
+            <span>Study Plans</span>
+        </div>
+
+        <div class="card">
+            <i class="bi bi-robot"></i>
+            <h3>{{ totalAIChats }}</h3>
+            <span>AI Chats</span>
+        </div>
+
+    </div>
+
+    <!-- Bottom Section -->
+
+    <div class="dashboard-bottom">
+
+        <!-- Recent Activity -->
+
+        <div class="recent">
+
+            <h4>Recent Activity</h4>
+
+            <div class="activity">
+                <span>📚 Subjects Created : {{ totalSubjects }}</span>
+            </div>
+
+            <div class="activity">
+                <span>📝 Notes Created : {{ totalNotes }}</span>
+            </div>
+
+            <div class="activity">
+                <span>📅 Study Plans Created : {{ totalStudyPlans }}</span>
+            </div>
+
+        </div>
+
+        <!-- Quick Actions -->
+
+        <div class="quick-actions">
+
+            <h4>Quick Actions</h4>
+
+            <button
+                class="action-btn"
+                (click)="goToSubjects()">
+
+                + Subject
+
+            </button>
+
+            <button
+                class="action-btn"
+                (click)="goToNotes()">
+
+                + Note
+
+            </button>
+
+            <button
+                class="action-btn"
+                (click)="goToStudyPlans()">
+
+                + Study Plan
+
+            </button>
+
+            <button
+                class="action-btn"
+                (click)="goToAIChats()">
+
+                + AI Chat
+
+            </button>
+
+        </div>
+
+    </div>
+
+</div>

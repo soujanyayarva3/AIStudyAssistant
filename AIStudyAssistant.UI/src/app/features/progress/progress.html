@@ -1,0 +1,235 @@
+<div class="progress-header">
+
+    <h2>Learning Progress</h2>
+
+    <p>
+        Track your learning journey and achievements.
+    </p>
+
+</div>
+
+
+<!-- Loading -->
+
+<div *ngIf="loading" class="loading">
+
+    Loading your progress...
+
+</div>
+
+
+<!-- Error -->
+
+<div *ngIf="!loading && error" class="error-message">
+
+    {{ error }}
+
+    <button (click)="loadProgress()">
+        Retry
+    </button>
+
+</div>
+
+
+<!-- Progress -->
+
+<div *ngIf="!loading && progress">
+
+
+    <!-- ========================= -->
+    <!-- STATISTICS -->
+    <!-- ========================= -->
+
+    <div class="stats-grid">
+
+
+        <div class="stat-card">
+
+            <i class="bi bi-book-fill"></i>
+
+            <h3>
+                {{ progress.totalSubjects }}
+            </h3>
+
+            <span>
+                Subjects
+            </span>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <i class="bi bi-journal-text"></i>
+
+            <h3>
+                {{ progress.totalNotes }}
+            </h3>
+
+            <span>
+                Notes
+            </span>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <i class="bi bi-patch-question-fill"></i>
+
+            <h3>
+                {{ progress.totalQuizzes }}
+            </h3>
+
+            <span>
+                Quizzes
+            </span>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <i class="bi bi-check-circle-fill"></i>
+
+            <h3>
+                {{ progress.completedStudyPlans }}
+                /
+                {{ progress.totalStudyPlans }}
+            </h3>
+
+            <span>
+                Study Plans Completed
+            </span>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- ========================= -->
+    <!-- OVERALL PROGRESS -->
+    <!-- ========================= -->
+
+    <div class="progress-section">
+
+        <div class="progress-card">
+
+            <h3>
+                Overall Learning Progress
+            </h3>
+
+            <div class="overall-progress">
+
+                <div class="progress">
+
+                    <div
+                        class="progress-bar bg-success"
+                        [style.width.%]="progress.progressPercentage">
+
+                        {{ progress.progressPercentage | number:'1.0-0' }}%
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <p class="progress-info">
+
+                You have completed
+                <strong>
+                    {{ progress.progressPercentage | number:'1.0-0' }}%
+                </strong>
+                of your learning activities.
+
+            </p>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- ========================= -->
+    <!-- QUIZ PERFORMANCE -->
+    <!-- ========================= -->
+
+    <div class="progress-section">
+
+        <div class="progress-card">
+
+            <h3>
+                Quiz Performance
+            </h3>
+
+            <div class="quiz-performance">
+
+                <div class="performance-icon">
+                    🎯
+                </div>
+
+                <div>
+
+                    <h2>
+                        {{ progress.averageQuizScore | number:'1.0-1' }}%
+                    </h2>
+
+                    <p>
+                        Average Quiz Score
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- ========================= -->
+    <!-- STUDY PLAN PROGRESS -->
+    <!-- ========================= -->
+
+    <div class="progress-section">
+
+        <div class="progress-card">
+
+            <h3>
+                Study Plan Progress
+            </h3>
+
+            <p>
+
+                {{ progress.completedStudyPlans }}
+                completed out of
+                {{ progress.totalStudyPlans }}
+
+            </p>
+
+            <div class="progress">
+
+                <div
+                    class="progress-bar bg-info"
+
+                    [style.width.%]="
+                        progress.totalStudyPlans > 0
+                        ? (progress.completedStudyPlans /
+                           progress.totalStudyPlans) * 100
+                        : 0
+                    ">
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+</div>

@@ -1,0 +1,549 @@
+<!-- =====================================================
+     PAGE HEADER
+     ===================================================== -->
+
+<div class="study-header">
+
+  <div>
+    <h2>📚 Study Plans</h2>
+    <p>Create, manage and track your study plans.</p>
+  </div>
+
+  <button
+    type="button"
+    class="add-plan-btn"
+    (click)="openAddForm()">
+
+    ➕ Create New Plan
+
+  </button>
+
+</div>
+
+
+<!-- =====================================================
+     SEARCH
+     ===================================================== -->
+
+<div class="search-box">
+
+  <span class="search-icon">🔍</span>
+
+  <input
+    type="text"
+    placeholder="Search study plans..."
+    [(ngModel)]="searchText"
+    (input)="filterPlans()"
+  />
+
+  <button
+    *ngIf="searchText"
+    type="button"
+    class="clear-search"
+    (click)="searchText=''; filterPlans()">
+
+    ✕
+
+  </button>
+
+</div>
+
+
+<!-- =====================================================
+     EXISTING PLANS HEADER
+     ===================================================== -->
+
+<div class="section-header">
+
+  <h3>Existing Plans</h3>
+
+  <span class="plan-count">
+
+    {{ filteredPlans.length }}
+
+    {{ filteredPlans.length === 1 ? 'Plan' : 'Plans' }}
+
+  </span>
+
+</div>
+
+
+<!-- =====================================================
+     NO PLANS
+     ===================================================== -->
+
+<div
+  class="empty-state"
+  *ngIf="filteredPlans.length === 0">
+
+  <div class="empty-icon">📖</div>
+
+  <h3>
+
+    {{
+      searchText
+        ? 'No plans found'
+        : 'No study plans yet'
+    }}
+
+  </h3>
+
+  <p>
+
+    {{
+      searchText
+        ? 'Try a different search term.'
+        : 'Create your first study plan to get started.'
+    }}
+
+  </p>
+
+  <button
+    *ngIf="!searchText"
+    type="button"
+    class="empty-add-btn"
+    (click)="openAddForm()">
+
+    ➕ Create Your First Plan
+
+  </button>
+
+</div>
+
+
+<!-- =====================================================
+     PLAN CARDS
+     ===================================================== -->
+
+<div
+  class="plans-grid"
+  *ngIf="filteredPlans.length > 0">
+
+  <div
+    class="plan-card"
+    *ngFor="let plan of filteredPlans">
+
+    <!-- CARD HEADER -->
+
+    <div class="plan-card-header">
+
+      <div class="plan-title-area">
+
+        <h3>
+          {{ plan.title }}
+        </h3>
+
+        <span
+          class="status-badge"
+          [ngClass]="{
+            'pending': plan.status === 'Pending',
+            'completed': plan.status === 'Completed',
+            'in-progress': plan.status === 'In Progress'
+          }">
+
+          {{ plan.status }}
+
+        </span>
+
+      </div>
+
+    </div>
+
+
+    <!-- DESCRIPTION -->
+
+    <p
+      class="plan-description"
+      *ngIf="plan.description">
+
+      {{ plan.description }}
+
+    </p>
+
+    <p
+      class="plan-description empty-description"
+      *ngIf="!plan.description">
+
+      No description provided.
+
+    </p>
+
+
+    <!-- DUE DATE -->
+
+    <div class="plan-due-date">
+
+      <span class="due-icon">📅</span>
+
+      <div>
+
+        <span class="due-label">
+          Due Date
+        </span>
+
+        <span class="due-value">
+
+          {{ plan.dueDate | date:'dd MMM yyyy, hh:mm a' }}
+
+        </span>
+
+      </div>
+
+    </div>
+
+
+    <!-- ACTIONS -->
+
+    <div class="plan-actions">
+
+      <button
+        type="button"
+        class="edit-btn"
+        (click)="editPlan(plan)">
+
+        ✏️ Edit
+
+      </button>
+
+      <button
+        type="button"
+        class="delete-btn"
+        (click)="askDelete(plan.planId)">
+
+        🗑️ Delete
+
+      </button>
+
+    </div>
+
+
+    <!-- =================================================
+         DELETE CONFIRMATION
+         ================================================= -->
+
+    <div
+      class="delete-confirmation"
+      *ngIf="deleteConfirmId === plan.planId">
+
+      <p>
+        Are you sure you want to delete this plan?
+      </p>
+
+      <div class="delete-confirm-actions">
+
+        <button
+          type="button"
+          class="cancel-delete-btn"
+          (click)="cancelDelete()"
+          [disabled]="deleting">
+
+          Cancel
+
+        </button>
+
+        <button
+          type="button"
+          class="confirm-delete-btn"
+          (click)="confirmDelete()"
+          [disabled]="deleting">
+
+          <span *ngIf="!deleting">
+            🗑️ Delete
+          </span>
+
+          <span *ngIf="deleting">
+            Deleting...
+          </span>
+
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<!-- =====================================================
+     ADD / EDIT MODAL
+     IMPORTANT: showAddModal controls the modal
+     ===================================================== -->
+
+<div
+  class="modal-overlay"
+  *ngIf="showAddModal"
+  (click)="closeForm()">
+
+  <div
+    class="study-plan-modal"
+    (click)="$event.stopPropagation()">
+
+
+    <!-- =================================================
+         MODAL HEADER
+         ================================================= -->
+
+    <div class="modal-header">
+
+      <div>
+
+        <h2>
+
+          {{
+            selectedPlanId > 0
+              ? '✏️ Edit Study Plan'
+              : '➕ Create Study Plan'
+          }}
+
+        </h2>
+
+        <p>
+
+          {{
+            selectedPlanId > 0
+              ? 'Update your study plan details.'
+              : 'Add a new study plan.'
+          }}
+
+        </p>
+
+      </div>
+
+
+      <button
+        type="button"
+        class="close-modal-btn"
+        (click)="closeForm()">
+
+        ✕
+
+      </button>
+
+    </div>
+
+
+    <!-- =================================================
+         FORM
+         ================================================= -->
+
+    <form
+      class="study-plan-form"
+      (ngSubmit)="savePlan()"
+      novalidate>
+
+
+      <!-- =================================================
+           TITLE
+           ================================================= -->
+
+      <div class="form-group">
+
+        <label for="planTitle">
+
+          Plan Title <span>*</span>
+
+        </label>
+
+        <input
+          id="planTitle"
+          type="text"
+          name="title"
+          placeholder="Enter study plan title"
+          [(ngModel)]="newPlan.title"
+          maxlength="100"
+          autocomplete="off"
+        />
+
+        <small
+          class="validation-message"
+          *ngIf="submitted && !newPlan.title.trim()">
+
+          Please enter a plan title.
+
+        </small>
+
+      </div>
+
+
+      <!-- =================================================
+           DESCRIPTION
+           ================================================= -->
+
+      <div class="form-group">
+
+        <label for="planDescription">
+
+          Description
+
+        </label>
+
+        <textarea
+          id="planDescription"
+          name="description"
+          rows="4"
+          placeholder="Enter a description..."
+          [(ngModel)]="newPlan.description"
+          maxlength="500">
+        </textarea>
+
+      </div>
+
+
+      <!-- =================================================
+           DATE + TIME
+           ================================================= -->
+
+      <div class="date-time-row">
+
+
+        <!-- DATE -->
+
+        <div class="form-group">
+
+          <label for="planDueDate">
+
+            Due Date <span>*</span>
+
+          </label>
+
+          <input
+            id="planDueDate"
+            type="date"
+            name="dueDate"
+            [min]="minDate"
+            [(ngModel)]="newPlan.dueDate"
+          />
+
+          <small
+            class="validation-message"
+            *ngIf="submitted && !newPlan.dueDate">
+
+            Please select a due date.
+
+          </small>
+
+        </div>
+
+
+        <!-- TIME -->
+
+        <div class="form-group">
+
+          <label for="planDueTime">
+
+            Due Time <span>*</span>
+
+          </label>
+
+          <input
+            id="planDueTime"
+            type="time"
+            name="dueTime"
+            [(ngModel)]="newPlan.dueTime"
+          />
+
+          <small
+            class="validation-message"
+            *ngIf="submitted && !newPlan.dueTime">
+
+            Please select a due time.
+
+          </small>
+
+        </div>
+
+      </div>
+
+
+      <!-- =================================================
+           STATUS
+           ================================================= -->
+
+      <div class="form-group">
+
+        <label for="planStatus">
+
+          Status
+
+        </label>
+
+        <select
+          id="planStatus"
+          name="status"
+          [(ngModel)]="newPlan.status">
+
+          <option value="Pending">
+            Pending
+          </option>
+
+          <option value="In Progress">
+            In Progress
+          </option>
+
+          <option value="Completed">
+            Completed
+          </option>
+
+        </select>
+
+      </div>
+
+
+      <!-- =================================================
+           MODAL ACTIONS
+           ================================================= -->
+
+      <div class="modal-actions">
+
+        <button
+          type="button"
+          class="cancel-btn"
+          (click)="closeForm()"
+          [disabled]="saving">
+
+          Cancel
+
+        </button>
+
+
+        <button
+          type="submit"
+          class="save-btn"
+          [disabled]="saving">
+
+          <!-- NORMAL -->
+
+          <span *ngIf="!saving">
+
+            {{
+              selectedPlanId > 0
+                ? '💾 Update Plan'
+                : '💾 Save Plan'
+            }}
+
+          </span>
+
+
+          <!-- SAVING -->
+
+          <span *ngIf="saving">
+
+            {{
+              selectedPlanId > 0
+                ? 'Updating...'
+                : 'Saving...'
+            }}
+
+          </span>
+
+        </button>
+
+      </div>
+
+    </form>
+
+  </div>
+
+</div>

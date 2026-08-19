@@ -1,0 +1,222 @@
+<div class="settings-page">
+
+  <!-- Header -->
+  <div class="settings-header">
+    <div>
+      <h1>Settings</h1>
+      <p>Customize your AI Study Assistant experience.</p>
+    </div>
+  </div>
+
+
+  <!-- Appearance -->
+  <div class="settings-card">
+
+    <div class="card-title">
+      <i class="bi bi-palette-fill"></i>
+
+      <div>
+        <h2>Appearance</h2>
+        <p>Choose how the application looks.</p>
+      </div>
+    </div>
+
+    <div class="setting-row">
+
+      <div>
+        <strong>Theme</strong>
+        <span>Choose your preferred theme.</span>
+      </div>
+
+      <select [(ngModel)]="theme">
+        <option value="Light">Light</option>
+        <option value="Dark">Dark</option>
+        <option value="System Default">System Default</option>
+      </select>
+
+    </div>
+
+  </div>
+
+
+  <!-- AI Preferences -->
+  <div class="settings-card">
+
+    <div class="card-title">
+      <i class="bi bi-robot"></i>
+
+      <div>
+        <h2>AI Preferences</h2>
+        <p>Customize how AI responds to you.</p>
+      </div>
+    </div>
+
+
+    <!-- Response Style -->
+    <div class="setting-row">
+
+      <div>
+        <strong>Response Style</strong>
+        <span>Choose how detailed AI responses should be.</span>
+      </div>
+
+      <select [(ngModel)]="responseStyle">
+        <option value="Concise">Concise</option>
+        <option value="Balanced">Balanced</option>
+        <option value="Detailed">Detailed</option>
+      </select>
+
+    </div>
+
+
+    <!-- Show Examples -->
+    <div class="setting-row">
+
+      <div>
+        <strong>Show Examples</strong>
+        <span>Include examples when explaining concepts.</span>
+      </div>
+
+      <label class="switch">
+
+        <input
+          type="checkbox"
+          [(ngModel)]="showExamples"
+        >
+
+        <span class="slider"></span>
+
+      </label>
+
+    </div>
+
+  </div>
+
+
+  <!-- Study Preferences -->
+  <div class="settings-card">
+
+    <div class="card-title">
+      <i class="bi bi-book-fill"></i>
+
+      <div>
+        <h2>Study Preferences</h2>
+        <p>Set your preferred study goals.</p>
+      </div>
+    </div>
+
+
+    <!-- Daily Study Goal -->
+    <div class="setting-row">
+
+      <div>
+        <strong>Daily Study Goal</strong>
+        <span>Set your target study time.</span>
+      </div>
+
+      <select [(ngModel)]="dailyStudyGoal">
+        <option value="30 minutes">30 minutes</option>
+        <option value="1 hour">1 hour</option>
+        <option value="2 hours">2 hours</option>
+        <option value="3 hours">3 hours</option>
+        <option value="4 hours">4 hours</option>
+      </select>
+
+    </div>
+
+
+    <!-- Quiz Difficulty -->
+    <div class="setting-row">
+
+      <div>
+        <strong>Quiz Difficulty</strong>
+        <span>Select your default quiz difficulty.</span>
+      </div>
+
+      <select [(ngModel)]="quizDifficulty">
+        <option value="Easy">Easy</option>
+        <option value="Medium">Medium</option>
+        <option value="Hard">Hard</option>
+      </select>
+
+    </div>
+
+  </div>
+
+
+  <!-- Notifications -->
+  <div class="settings-card">
+
+    <div class="card-title">
+      <i class="bi bi-bell-fill"></i>
+
+      <div>
+        <h2>Notifications</h2>
+        <p>Manage your study reminders.</p>
+      </div>
+    </div>
+
+
+    <!-- Study Reminders -->
+    <div class="setting-row">
+
+      <div>
+        <strong>Study Reminders</strong>
+        <span>Receive reminders for your study plans.</span>
+      </div>
+
+      <label class="switch">
+
+        <input
+          type="checkbox"
+          [(ngModel)]="studyReminders"
+        >
+
+        <span class="slider"></span>
+
+      </label>
+
+    </div>
+
+
+    <!-- Quiz Reminders -->
+    <div class="setting-row">
+
+      <div>
+        <strong>Quiz Reminders</strong>
+        <span>Get reminders about upcoming quizzes.</span>
+      </div>
+
+      <label class="switch">
+
+        <input
+          type="checkbox"
+          [(ngModel)]="quizReminders"
+        >
+
+        <span class="slider"></span>
+
+      </label>
+
+    </div>
+
+  </div>
+
+
+  <!-- Save -->
+  <div class="settings-actions">
+
+    <button
+      class="save-btn"
+      (click)="saveSettings()"
+    >
+
+      <i class="bi bi-check-lg"></i>
+
+      Save Changes
+
+    </button>
+
+  </div>
+
+</div>

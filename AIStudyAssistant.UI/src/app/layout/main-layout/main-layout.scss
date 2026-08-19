@@ -1,0 +1,28 @@
+
+
+:root {
+  --app-bg: #f8fafc;
+  --app-card: #ffffff;
+  --app-text: #1e293b;
+  --app-border: #e2e8f0;
+}
+
+body.dark-theme {
+  --app-bg: #0f172a;
+  --app-card: #1e293b;
+  --app-text: #e2e8f0;
+  --app-border: #475569;
+}
+.layout {
+  display: flex;
+  height: calc(100vh - 70px);
+}
+
+.content {
+  flex: 1;
+  background: var(--app-bg);
+  color: var(--app-text);
+  padding: 30px;
+  overflow: auto;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}

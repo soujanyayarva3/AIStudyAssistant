@@ -1,0 +1,323 @@
+<!-- =====================================================
+     SIDEBAR
+===================================================== -->
+
+<div class="sidebar">
+
+    <!-- SIDEBAR HEADER -->
+
+    <div class="sidebar-header">
+
+        <h4>
+            AI Study Assistant
+        </h4>
+
+        <button
+            type="button"
+            class="new-chat-btn"
+            (click)="newChat()">
+
+            + New Chat
+
+        </button>
+
+    </div>
+
+
+    <!-- =================================================
+         CHAT SEARCH
+    ================================================== -->
+
+    <div class="chat-search">
+
+        <span class="search-icon">
+            🔍
+        </span>
+
+        <input
+            type="text"
+            placeholder="Search chats..."
+            [(ngModel)]="conversationSearch"
+            (input)="filterConversations()"
+        />
+
+        <button
+            *ngIf="conversationSearch"
+            type="button"
+            class="clear-chat-search"
+            (click)="clearConversationSearch()">
+
+            ✕
+
+        </button>
+
+    </div>
+
+
+    <!-- =================================================
+         SEARCH RESULT EMPTY
+    ================================================== -->
+
+    <div
+        class="no-search-results"
+        *ngIf="
+            conversationSearch &&
+            filteredConversations.length === 0
+        ">
+
+        <div>
+            🔍
+        </div>
+
+        <p>
+            No chats found
+        </p>
+
+    </div>
+
+
+    <!-- =================================================
+         HISTORY LIST
+    ================================================== -->
+
+    <div
+        class="history-list"
+        *ngIf="filteredConversations.length > 0">
+
+        <div
+            *ngFor="
+                let item of filteredConversations
+            "
+            class="history-card"
+            [class.active]="
+                item.conversationId ==
+                currentConversationId
+            "
+            (click)="
+                loadConversation(
+                    item.conversationId
+                )
+            ">
+
+            <!-- CHAT TITLE -->
+
+            <div class="history-question">
+
+                {{ item.title }}
+
+            </div>
+
+
+            <!-- CHAT DATE -->
+
+            <div class="history-date">
+
+                {{
+                    item.createdDate
+                    | date:'medium'
+                }}
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     CHAT AREA
+===================================================== -->
+
+<div class="chat-section">
+
+
+    <!-- =================================================
+         CHAT HEADER
+    ================================================== -->
+
+    <div class="chat-header">
+
+        <h2>
+            🤖 AI Study Assistant
+        </h2>
+
+        <p>
+            Ask questions and continue your conversations.
+        </p>
+
+    </div>
+
+
+    <!-- =================================================
+         EMPTY CHAT
+    ================================================== -->
+
+    <div
+        class="empty-chat"
+        *ngIf="
+            messages.length === 0 &&
+            !isLoading
+        ">
+
+        <div class="empty-icon">
+
+            🤖
+
+        </div>
+
+        <h3>
+
+            Start a New Conversation
+
+        </h3>
+
+        <p>
+
+            Ask anything about your studies.
+
+        </p>
+
+    </div>
+
+
+    <!-- =================================================
+         CONVERSATION
+    ================================================== -->
+
+    <div
+        #chatContainer
+        class="conversation"
+        *ngIf="
+            messages.length > 0
+        ">
+
+
+        <!-- =================================================
+             MESSAGES
+        ================================================== -->
+
+        <div
+            *ngFor="let msg of messages">
+
+
+            <!-- =============================================
+                 USER MESSAGE
+            ============================================== -->
+
+            <div
+                class="message-row user-row">
+
+                <div
+                    class="chat-bubble user-bubble">
+
+                    <div
+                        class="message-title">
+
+                        👤 You
+
+                    </div>
+
+                    <div
+                        class="message-content">
+
+                        {{ msg.question }}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- =============================================
+                 AI MESSAGE
+            ============================================== -->
+
+            <div
+                class="message-row ai-row">
+
+                <div
+                    class="chat-bubble ai-bubble">
+
+                    <div
+                        class="message-title">
+
+                        🤖 AI Study Assistant
+
+                    </div>
+
+                    <div
+                        class="message-content">
+
+                        {{ msg.response }}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             THINKING
+        ================================================== -->
+
+        <div
+            class="thinking-box"
+            *ngIf="isLoading">
+
+            <div class="loader"></div>
+
+            <span>
+
+                AI is thinking...
+
+            </span>
+
+        </div>
+
+    </div>
+
+
+    <!-- =================================================
+         INPUT
+    ================================================== -->
+
+    <div class="chat-input">
+
+        <textarea
+            rows="2"
+            class="form-control"
+            placeholder="Message AI Study Assistant..."
+            [(ngModel)]="question"
+            (keydown.enter)="sendMessage($event)">
+        </textarea>
+
+
+        <button
+            type="button"
+            class="btn btn-primary"
+            (click)="askAI()"
+            [disabled]="isLoading || !question.trim()">
+
+            <span *ngIf="!isLoading">
+
+                Send
+
+            </span>
+
+            <span *ngIf="isLoading">
+
+                Thinking...
+
+            </span>
+
+        </button>
+
+    </div>
+
+</div>

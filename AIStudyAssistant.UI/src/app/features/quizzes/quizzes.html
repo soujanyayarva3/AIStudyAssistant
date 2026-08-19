@@ -1,0 +1,809 @@
+<div class="quiz-page">
+
+  <!-- =====================================================
+       PAGE HEADER
+  ====================================================== -->
+
+  <div class="page-header">
+
+    <div>
+
+      <div class="header-badge">
+        ✨ AI POWERED
+      </div>
+
+      <h1>
+        Practice Quizzes
+      </h1>
+
+      <p>
+        Test your knowledge with personalized
+        AI-generated questions.
+      </p>
+
+    </div>
+
+  </div>
+
+
+  <!-- =====================================================
+       QUIZ GENERATOR
+  ====================================================== -->
+
+  <div
+    class="generator-card"
+    *ngIf="showGenerator"
+  >
+
+    <div class="generator-icon">
+      🧠
+    </div>
+
+
+    <div class="generator-content">
+
+      <h2>
+        Create an AI Quiz
+      </h2>
+
+      <p class="generator-description">
+        Enter any topic and let AI create
+        <strong>{{ totalQuestions }}</strong>
+        questions to test your knowledge.
+      </p>
+
+
+      <!-- TOPIC INPUT -->
+
+      <div class="input-section">
+
+        <label>
+          Quiz Topic
+        </label>
+
+
+        <div class="input-row">
+
+          <div class="input-wrapper">
+
+            <span class="input-icon">
+              🔍
+            </span>
+
+            <input
+              type="text"
+              [(ngModel)]="topic"
+              placeholder="e.g. Java, Python, DBMS, Machine Learning..."
+              [disabled]="loading"
+              (keyup.enter)="generateQuiz()"
+            >
+
+          </div>
+
+
+          <button
+            class="generate-btn"
+            (click)="generateQuiz()"
+            [disabled]="loading"
+          >
+
+            <span *ngIf="!loading">
+              ✨ Generate Quiz
+            </span>
+
+            <span *ngIf="loading">
+              Generating...
+            </span>
+
+          </button>
+
+        </div>
+
+      </div>
+
+
+      <!-- =================================================
+           LOADING SECTION
+      ================================================== -->
+
+      <div
+        class="loading-box"
+        *ngIf="loading"
+      >
+
+        <div class="loading-header">
+
+          <div class="loading-title">
+
+            <span class="spinner"></span>
+
+            <div>
+
+              <span class="loading-main-text">
+                Creating your quiz...
+              </span>
+
+              <span class="loading-sub-text">
+                Generating {{ totalQuestions }} questions
+              </span>
+
+            </div>
+
+          </div>
+
+
+          <strong>
+            {{ totalQuestions }} Questions
+          </strong>
+
+        </div>
+
+
+        <!-- ANIMATED LOADING BAR -->
+
+        <div class="loading-bar">
+
+          <div class="loading-progress"></div>
+
+        </div>
+
+
+        <p class="loading-message">
+          🤖 AI is preparing your questions.
+          Please wait...
+        </p>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+
+  <!-- =====================================================
+       QUIZ CONTAINER
+  ====================================================== -->
+
+  <div
+    class="quiz-container"
+    *ngIf="
+      quizStarted &&
+      !quizCompleted &&
+      currentQuestion
+    "
+  >
+
+
+    <!-- =================================================
+         QUIZ HEADER
+    ================================================== -->
+
+    <div class="quiz-header">
+
+
+      <div class="quiz-title">
+
+        <span class="topic-icon">
+          📚
+        </span>
+
+
+        <div>
+
+          <span class="topic-badge">
+            {{ topic }}
+          </span>
+
+          <h2>
+            Knowledge Check
+          </h2>
+
+        </div>
+
+      </div>
+
+
+      <!-- QUESTION COUNTER -->
+
+      <div class="question-counter">
+
+        <span>
+          Question
+        </span>
+
+        <strong>
+          {{ currentQuestionIndex + 1 }}
+        </strong>
+
+        <span>
+          /
+        </span>
+
+        <span>
+          {{ questions.length }}
+        </span>
+
+      </div>
+
+    </div>
+
+
+
+    <!-- =================================================
+         QUIZ PROGRESS
+    ================================================== -->
+
+    <div class="quiz-progress">
+
+      <div class="progress-info">
+
+        <span>
+          Your progress
+        </span>
+
+        <strong>
+          {{ progressPercentage }}%
+        </strong>
+
+      </div>
+
+
+      <div class="progress-bar">
+
+        <div
+          class="progress-fill"
+          [style.width.%]="progressPercentage"
+        ></div>
+
+      </div>
+
+    </div>
+
+
+
+    <!-- =================================================
+         QUESTION CARD
+    ================================================== -->
+
+    <div class="question-card">
+
+
+      <div class="question-number">
+        QUESTION {{ currentQuestionIndex + 1 }}
+      </div>
+
+
+      <h1 class="question-text">
+        {{ currentQuestion.question }}
+      </h1>
+
+
+      <p class="select-text">
+        Select the correct answer
+      </p>
+
+
+
+      <!-- =================================================
+           OPTIONS
+      ================================================== -->
+
+      <div class="options">
+
+
+        <!-- OPTION A -->
+
+        <label
+          class="option"
+          [class.selected]="
+            selectedAnswer === currentQuestion.optionA
+          "
+        >
+
+          <input
+            type="radio"
+            name="answer"
+            [value]="currentQuestion.optionA"
+            [(ngModel)]="selectedAnswer"
+          >
+
+
+          <span class="option-letter">
+            A
+          </span>
+
+
+          <span class="option-text">
+            {{ currentQuestion.optionA }}
+          </span>
+
+
+          <span
+            class="check-icon"
+            *ngIf="
+              selectedAnswer === currentQuestion.optionA
+            "
+          >
+            ✓
+          </span>
+
+        </label>
+
+
+
+        <!-- OPTION B -->
+
+        <label
+          class="option"
+          [class.selected]="
+            selectedAnswer === currentQuestion.optionB
+          "
+        >
+
+          <input
+            type="radio"
+            name="answer"
+            [value]="currentQuestion.optionB"
+            [(ngModel)]="selectedAnswer"
+          >
+
+
+          <span class="option-letter">
+            B
+          </span>
+
+
+          <span class="option-text">
+            {{ currentQuestion.optionB }}
+          </span>
+
+
+          <span
+            class="check-icon"
+            *ngIf="
+              selectedAnswer === currentQuestion.optionB
+            "
+          >
+            ✓
+          </span>
+
+        </label>
+
+
+
+        <!-- OPTION C -->
+
+        <label
+          class="option"
+          [class.selected]="
+            selectedAnswer === currentQuestion.optionC
+          "
+        >
+
+          <input
+            type="radio"
+            name="answer"
+            [value]="currentQuestion.optionC"
+            [(ngModel)]="selectedAnswer"
+          >
+
+
+          <span class="option-letter">
+            C
+          </span>
+
+
+          <span class="option-text">
+            {{ currentQuestion.optionC }}
+          </span>
+
+
+          <span
+            class="check-icon"
+            *ngIf="
+              selectedAnswer === currentQuestion.optionC
+            "
+          >
+            ✓
+          </span>
+
+        </label>
+
+
+
+        <!-- OPTION D -->
+
+        <label
+          class="option"
+          [class.selected]="
+            selectedAnswer === currentQuestion.optionD
+          "
+        >
+
+          <input
+            type="radio"
+            name="answer"
+            [value]="currentQuestion.optionD"
+            [(ngModel)]="selectedAnswer"
+          >
+
+
+          <span class="option-letter">
+            D
+          </span>
+
+
+          <span class="option-text">
+            {{ currentQuestion.optionD }}
+          </span>
+
+
+          <span
+            class="check-icon"
+            *ngIf="
+              selectedAnswer === currentQuestion.optionD
+            "
+          >
+            ✓
+          </span>
+
+        </label>
+
+      </div>
+
+    </div>
+
+
+
+    <!-- =================================================
+         NAVIGATION
+    ================================================== -->
+
+    <div class="quiz-navigation">
+
+
+      <!-- PREVIOUS -->
+
+      <button
+        class="previous-btn"
+        (click)="previousQuestion()"
+        [disabled]="currentQuestionIndex === 0"
+      >
+
+        ← Previous
+
+      </button>
+
+
+      <!-- NAVIGATION COUNTER -->
+
+      <div class="navigation-info">
+
+        {{ currentQuestionIndex + 1 }}
+
+        of
+
+        {{ questions.length }}
+
+      </div>
+
+
+      <!-- NEXT -->
+
+      <button
+        class="next-btn"
+        *ngIf="
+          currentQuestionIndex <
+          questions.length - 1
+        "
+        (click)="nextQuestion()"
+      >
+
+        Next
+
+        <span>
+          →
+        </span>
+
+      </button>
+
+
+      <!-- SUBMIT -->
+
+      <button
+        class="submit-btn"
+        *ngIf="
+          currentQuestionIndex ===
+          questions.length - 1
+        "
+        (click)="submitQuiz()"
+      >
+
+        ✓ Submit Quiz
+
+      </button>
+
+    </div>
+
+  </div>
+
+
+
+  <!-- =====================================================
+       RESULT
+  ====================================================== -->
+
+  <div
+    class="result-container"
+    *ngIf="quizCompleted"
+  >
+
+
+    <!-- =================================================
+         RESULT CARD
+    ================================================== -->
+
+    <div class="result-card">
+
+
+      <div class="result-icon">
+        🎯
+      </div>
+
+
+      <div class="result-label">
+        QUIZ COMPLETED
+      </div>
+
+
+      <h1>
+        {{ resultMessage }}
+      </h1>
+
+
+      <p class="result-topic">
+        {{ topic }}
+      </p>
+
+
+
+      <!-- SCORE -->
+
+      <div class="score-section">
+
+
+        <div class="score-circle">
+
+          <div class="score-number">
+
+            {{ score }}
+
+            <span>
+              / {{ questions.length }}
+            </span>
+
+          </div>
+
+
+          <div class="score-text">
+            Score
+          </div>
+
+        </div>
+
+
+
+        <div class="score-details">
+
+          <div class="percentage">
+            {{ scorePercentage }}%
+          </div>
+
+
+          <p>
+
+            You answered
+
+            <strong>
+              {{ score }}
+            </strong>
+
+            out of
+
+            <strong>
+              {{ questions.length }}
+            </strong>
+
+            questions correctly.
+
+          </p>
+
+        </div>
+
+      </div>
+
+
+
+      <!-- RESTART -->
+
+      <button
+        class="restart-btn"
+        (click)="restartQuiz()"
+      >
+
+        🔄 Take Another Quiz
+
+      </button>
+
+    </div>
+
+
+
+    <!-- =================================================
+         ANSWER REVIEW
+    ================================================== -->
+
+    <div class="review-section">
+
+
+      <div class="review-header">
+
+        <div>
+
+          <span class="review-badge">
+            REVIEW
+          </span>
+
+
+          <h2>
+            Answer Review
+          </h2>
+
+
+          <p>
+            Review your answers and learn
+            from your mistakes.
+          </p>
+
+        </div>
+
+      </div>
+
+
+
+      <!-- =================================================
+           REVIEW QUESTIONS
+      ================================================== -->
+
+      <div
+        class="review-card"
+        *ngFor="
+          let question of questions;
+          let i = index
+        "
+
+        [class.correct]="
+          userAnswers[i] ===
+          question.correctAnswer
+        "
+
+        [class.wrong]="
+          userAnswers[i] !==
+          question.correctAnswer
+        "
+      >
+
+
+        <!-- REVIEW TOP -->
+
+        <div class="review-top">
+
+
+          <span class="review-question-number">
+            Question {{ i + 1 }}
+          </span>
+
+
+          <!-- CORRECT -->
+
+          <span
+            class="status correct-status"
+            *ngIf="
+              userAnswers[i] ===
+              question.correctAnswer
+            "
+          >
+
+            ✓ Correct
+
+          </span>
+
+
+          <!-- INCORRECT -->
+
+          <span
+            class="status wrong-status"
+            *ngIf="
+              userAnswers[i] !==
+              question.correctAnswer
+            "
+          >
+
+            ✕ Incorrect
+
+          </span>
+
+        </div>
+
+
+
+        <!-- QUESTION -->
+
+        <h3>
+          {{ question.question }}
+        </h3>
+
+
+
+        <!-- USER ANSWER -->
+
+        <div class="answer-row">
+
+          <span class="answer-label">
+            Your answer
+          </span>
+
+
+          <span
+            class="answer-value"
+            [class.no-answer]="
+              !userAnswers[i]
+            "
+          >
+
+            {{ userAnswers[i] || 'Not answered' }}
+
+          </span>
+
+        </div>
+
+
+
+        <!-- CORRECT ANSWER -->
+
+        <div
+          class="correct-answer"
+          *ngIf="
+            userAnswers[i] !==
+            question.correctAnswer
+          "
+        >
+
+          <span>
+            ✓
+          </span>
+
+
+          <div>
+
+            <strong>
+              Correct answer
+            </strong>
+
+
+            <p>
+              {{ question.correctAnswer }}
+            </p>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>

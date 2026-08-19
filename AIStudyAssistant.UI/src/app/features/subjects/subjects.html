@@ -1,0 +1,288 @@
+<!-- HEADER -->
+
+<div class="subjects-header">
+
+  <div>
+    <h2>Subjects</h2>
+    <p>Manage your learning subjects.</p>
+  </div>
+
+  <button
+    class="btn btn-primary"
+    (click)="openAddForm()">
+
+    <i class="bi bi-plus-circle"></i>
+    Add Subject
+
+  </button>
+
+</div>
+
+
+<!-- SEARCH -->
+
+<div class="search-section">
+
+  <div class="input-group">
+
+    <span class="input-group-text">
+      <i class="bi bi-search"></i>
+    </span>
+
+    <input
+      type="text"
+      class="form-control"
+      placeholder="Search subjects..."
+      [(ngModel)]="searchText">
+
+  </div>
+
+</div>
+
+
+<!-- SUBJECT TABLE -->
+
+<div class="table-responsive">
+
+  <table class="table table-bordered table-hover">
+
+    <thead class="table-light">
+
+      <tr>
+
+        <th>#</th>
+
+        <th>Subject</th>
+
+        <th>Description</th>
+
+        <th width="160">Actions</th>
+
+      </tr>
+
+    </thead>
+
+
+    <tbody>
+
+      <tr
+        *ngFor="let subject of filteredSubjects; let i = index">
+
+        <td>
+          {{ i + 1 }}
+        </td>
+
+        <td>
+          <strong>{{ subject.subjectName }}</strong>
+        </td>
+
+        <td>
+          {{ subject.description || 'No description' }}
+        </td>
+
+        <td>
+
+          <!-- EDIT -->
+
+          <button
+            class="btn btn-warning btn-sm me-2"
+            (click)="editSubject(subject)">
+
+            <i class="bi bi-pencil"></i>
+
+          </button>
+
+
+          <!-- DELETE -->
+
+          <button
+            class="btn btn-danger btn-sm"
+            (click)="confirmDelete(subject)">
+
+            <i class="bi bi-trash"></i>
+
+          </button>
+
+        </td>
+
+      </tr>
+
+
+      <!-- NO RESULTS -->
+
+      <tr *ngIf="filteredSubjects.length === 0">
+
+        <td
+          colspan="4"
+          class="text-center py-4">
+
+          <i class="bi bi-search fs-3"></i>
+
+          <p class="mt-2 mb-0">
+            No subjects found.
+          </p>
+
+        </td>
+
+      </tr>
+
+    </tbody>
+
+  </table>
+
+</div>
+
+
+<!-- ADD / EDIT FORM -->
+
+<div
+  class="modal-backdrop-custom"
+  *ngIf="showAddModal">
+
+  <div class="custom-modal">
+
+    <div class="modal-header">
+
+      <h4>
+        {{ selectedSubjectId === 0
+          ? 'Add Subject'
+          : 'Edit Subject' }}
+      </h4>
+
+      <button
+        type="button"
+        class="btn-close"
+        (click)="closeForm()">
+      </button>
+
+    </div>
+
+
+    <div class="modal-body">
+
+      <!-- Subject Name -->
+
+      <div class="mb-3">
+
+        <label class="form-label">
+          Subject Name
+        </label>
+
+        <input
+          type="text"
+          class="form-control"
+          placeholder="Example: Java"
+          [(ngModel)]="newSubject.subjectName">
+
+      </div>
+
+
+      <!-- Description -->
+
+      <div class="mb-3">
+
+        <label class="form-label">
+          Description
+        </label>
+
+        <textarea
+          class="form-control"
+          rows="3"
+          placeholder="Example: Learn Java programming, OOP concepts and problem solving."
+          [(ngModel)]="newSubject.description">
+        </textarea>
+
+      </div>
+
+    </div>
+
+
+    <div class="modal-footer">
+
+      <button
+        class="btn btn-secondary"
+        (click)="closeForm()">
+
+        Cancel
+
+      </button>
+
+      <button
+        class="btn btn-success"
+        (click)="saveSubject()"
+        [disabled]="!newSubject.subjectName.trim()">
+
+        {{ selectedSubjectId === 0
+          ? 'Add Subject'
+          : 'Update Subject' }}
+
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<!-- DELETE CONFIRMATION -->
+
+<div
+  class="modal-backdrop-custom"
+  *ngIf="showDeleteConfirm">
+
+  <div class="custom-modal delete-modal">
+
+    <div class="modal-body text-center">
+
+      <div class="delete-icon">
+
+        <i class="bi bi-exclamation-triangle"></i>
+
+      </div>
+
+      <h4 class="mt-3">
+        Are you sure?
+      </h4>
+
+      <p>
+
+        Do you really want to delete
+
+        <strong>
+          {{ subjectToDelete?.subjectName }}
+        </strong>?
+
+        <br>
+
+        This action cannot be undone.
+
+      </p>
+
+    </div>
+
+
+    <div class="modal-footer justify-content-center">
+
+      <button
+        class="btn btn-secondary"
+        (click)="cancelDelete()">
+
+        Cancel
+
+      </button>
+
+      <button
+        class="btn btn-danger"
+        (click)="deleteSubject()">
+
+        <i class="bi bi-trash"></i>
+        Delete
+
+      </button>
+
+    </div>
+
+  </div>
+
+</div>

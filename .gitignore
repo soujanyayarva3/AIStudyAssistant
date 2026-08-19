@@ -33,7 +33,11 @@ node_modules/
 *.log
 # Unrelated projects
 AIStudyAssistant.API/
-AIStudyAssistant.UI/
+node_modules/
+**/node_modules/
+
+.angular/
+**/.angular/
 AgenticAI/
 AgenticWorkflowPatternApp/
 ConsoleApp1/

@@ -1,0 +1,203 @@
+<div class="login-page">
+
+  <!-- LEFT SIDE -->
+
+  <section class="welcome-section">
+
+
+<div class="welcome-content">
+
+  <div class="logo">
+    <span>AI</span>
+  </div>
+
+  <p class="eyebrow">
+    AI-POWERED LEARNING
+  </p>
+
+  <h1>
+    Study smarter.<br>
+    Achieve more.
+  </h1>
+
+  <p class="description">
+    Your intelligent study companion for organizing notes,
+    creating study plans, asking questions, generating quizzes,
+    and tracking your learning progress.
+  </p>
+
+  <div class="features">
+
+    <div class="feature">
+      <div class="feature-icon">
+        <i class="bi bi-stars"></i>
+      </div>
+
+      <div>
+        <h3>AI Study Assistant</h3>
+        <p>Get instant help with your doubts and questions.</p>
+      </div>
+    </div>
+
+    <div class="feature">
+      <div class="feature-icon">
+        <i class="bi bi-journal-text"></i>
+      </div>
+
+      <div>
+        <h3>Smart Notes</h3>
+        <p>Turn your study material into useful summaries.</p>
+      </div>
+    </div>
+
+    <div class="feature">
+      <div class="feature-icon">
+        <i class="bi bi-bar-chart-line"></i>
+      </div>
+
+      <div>
+        <h3>Track Progress</h3>
+        <p>Stay organized and monitor your learning journey.</p>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+
+  </section>
+
+  <!-- RIGHT SIDE -->
+
+  <section class="login-section">
+
+
+<div class="login-card">
+
+  <div class="mobile-logo">
+    <span>AI</span>
+  </div>
+
+  <h2>Welcome back</h2>
+
+  <p class="subtitle">
+    Sign in to continue your learning journey.
+  </p>
+
+
+  <!-- EMAIL -->
+
+  <div class="form-group">
+
+    <label for="email">
+      Email address
+    </label>
+
+    <div class="input-wrapper">
+
+      <i class="bi bi-envelope"></i>
+
+      <input
+        id="email"
+        type="email"
+        placeholder="Enter your email"
+        [(ngModel)]="email"
+        name="email"
+        autocomplete="email"
+      />
+
+    </div>
+
+  </div>
+
+
+  <!-- PASSWORD -->
+
+  <div class="form-group">
+
+    <div class="label-row">
+
+      <label for="password">
+        Password
+      </label>
+
+      <a routerLink="/forgot-password">
+        Forgot password?
+      </a>
+
+    </div>
+
+    <div class="input-wrapper">
+
+      <i class="bi bi-lock"></i>
+
+      <input
+        id="password"
+        type="password"
+        placeholder="Enter your password"
+        [(ngModel)]="password"
+        name="password"
+        autocomplete="current-password"
+      />
+
+    </div>
+
+  </div>
+
+
+  <!-- ERROR -->
+
+  <div
+    class="error-message"
+    *ngIf="errorMessage"
+  >
+    <i class="bi bi-exclamation-circle"></i>
+
+    <span>
+      {{ errorMessage }}
+    </span>
+  </div>
+
+
+  <!-- LOGIN BUTTON -->
+
+  <button
+    class="login-button"
+    (click)="login()"
+    [disabled]="isLoading"
+  >
+
+    <span *ngIf="!isLoading">
+      Sign In
+      <i class="bi bi-arrow-right"></i>
+    </span>
+
+    <span
+      class="loading-text"
+      *ngIf="isLoading"
+    >
+      Signing in...
+    </span>
+
+  </button>
+
+
+  <!-- REGISTER -->
+
+  <p class="register-text">
+
+    Don't have an account?
+
+    <a routerLink="/register">
+      Create an account
+    </a>
+
+  </p>
+
+</div>
+
+
+  </section>
+
+</div>

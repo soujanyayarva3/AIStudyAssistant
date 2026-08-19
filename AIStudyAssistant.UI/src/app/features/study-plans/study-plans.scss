@@ -1,0 +1,694 @@
+/* =========================================================
+   STUDY PLANS PAGE
+   ========================================================= */
+
+.study-plans-page {
+  padding: 30px;
+  background: #f5f7fb;
+  min-height: 100vh;
+}
+
+
+/* =========================================================
+   HEADER
+   ========================================================= */
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 28px;
+}
+
+.page-header h2 {
+  margin: 0 0 6px;
+  font-size: 34px;
+  font-weight: 700;
+  color: #18212f;
+}
+
+.page-header p {
+  margin: 0;
+  color: #6c757d;
+  font-size: 15px;
+}
+
+
+/* =========================================================
+   CREATE BUTTON
+   ========================================================= */
+
+.add-plan-btn {
+  border: none;
+  border-radius: 10px;
+  padding: 11px 20px;
+  background: #4f46e5;
+  color: white;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.add-plan-btn:hover {
+  background: #4338ca;
+  transform: translateY(-1px);
+}
+
+
+/* =========================================================
+   SEARCH
+   ========================================================= */
+
+.search-section {
+  margin-bottom: 28px;
+}
+
+.search-box {
+  position: relative;
+  max-width: 520px;
+}
+
+.search-box input {
+  width: 100%;
+  height: 46px;
+  padding: 0 45px 0 44px;
+  border: 1px solid #dfe3eb;
+  border-radius: 12px;
+  background: #ffffff;
+  font-size: 15px;
+  outline: none;
+  box-sizing: border-box;
+  transition: 0.2s ease;
+}
+
+.search-box input:focus {
+  border-color: #6366f1;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.12);
+}
+
+.search-icon {
+  position: absolute;
+  left: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 17px;
+  z-index: 2;
+}
+
+.clear-search {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: 50%;
+  background: #eef0f4;
+  color: #555;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.clear-search:hover {
+  background: #e1e4ea;
+}
+
+
+/* =========================================================
+   SECTION HEADER
+   ========================================================= */
+
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.section-header h3 {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 700;
+  color: #202938;
+}
+
+.plan-count {
+  padding: 5px 10px;
+  border-radius: 20px;
+  background: #e8edff;
+  color: #4f46e5;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+
+/* =========================================================
+   PLANS GRID
+   ========================================================= */
+
+.plans-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 22px;
+}
+
+
+/* =========================================================
+   PLAN CARD
+   ========================================================= */
+
+.plan-card {
+  position: relative;
+  background: #ffffff;
+  border: 1px solid #e4e7ec;
+  border-radius: 16px;
+  padding: 22px;
+  box-shadow: 0 5px 18px rgba(0, 0, 0, 0.06);
+  transition: 0.2s ease;
+  overflow: hidden;
+}
+
+.plan-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.09);
+}
+
+
+/* =========================================================
+   CARD HEADER
+   ========================================================= */
+
+.plan-card-header {
+  margin-bottom: 12px;
+}
+
+.plan-title-area {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.plan-title-area h3 {
+  margin: 0;
+  color: #202938;
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1.35;
+  word-break: break-word;
+}
+
+
+/* =========================================================
+   STATUS
+   ========================================================= */
+
+.status-badge {
+  flex-shrink: 0;
+  padding: 6px 11px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.status-badge.pending {
+  background: #fff4db;
+  color: #b77900;
+}
+
+.status-badge.completed {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.status-badge.in-progress {
+  background: #dff7fb;
+  color: #087f8c;
+}
+
+
+/* =========================================================
+   DESCRIPTION
+   ========================================================= */
+
+.plan-description {
+  margin: 14px 0 18px;
+  color: #626b78;
+  font-size: 14px;
+  line-height: 1.6;
+  min-height: 45px;
+  word-break: break-word;
+}
+
+.empty-description {
+  color: #9aa1ab;
+  font-style: italic;
+}
+
+
+/* =========================================================
+   DUE DATE
+   ========================================================= */
+
+.plan-due-date {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border-radius: 10px;
+  background: #f7f8fc;
+  margin-bottom: 18px;
+}
+
+.due-icon {
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9px;
+  background: #e9edff;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.plan-due-date > div {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.due-label {
+  font-size: 12px;
+  color: #8a919c;
+}
+
+.due-value {
+  font-size: 14px;
+  font-weight: 600;
+  color: #303846;
+}
+
+
+/* =========================================================
+   CARD ACTIONS
+   ========================================================= */
+
+.plan-actions {
+  display: flex;
+  gap: 10px;
+  border-top: 1px solid #edf0f4;
+  padding-top: 16px;
+}
+
+.plan-actions button {
+  flex: 1;
+  height: 40px;
+  border-radius: 9px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.edit-btn {
+  border: 1px solid #d9ddf2;
+  background: #f4f5ff;
+  color: #4f46e5;
+}
+
+.edit-btn:hover {
+  background: #e9ebff;
+}
+
+.delete-btn {
+  border: 1px solid #f0d2d2;
+  background: #fff6f6;
+  color: #dc3545;
+}
+
+.delete-btn:hover {
+  background: #ffeaea;
+}
+
+
+/* =========================================================
+   DELETE CONFIRMATION
+   ========================================================= */
+
+.delete-confirmation {
+  margin-top: 15px;
+  padding: 15px;
+  border-radius: 10px;
+  border: 1px solid #f1cccc;
+  background: #fff7f7;
+}
+
+.delete-confirmation p {
+  margin: 0 0 13px;
+  color: #555;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.delete-confirm-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.delete-confirm-actions button {
+  min-width: 75px;
+  height: 36px;
+  padding: 0 12px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.cancel-delete-btn {
+  border: 1px solid #d9dce2;
+  background: #ffffff;
+  color: #555;
+}
+
+.confirm-delete-btn {
+  border: none;
+  background: #dc3545;
+  color: #ffffff;
+}
+
+.confirm-delete-btn:hover {
+  background: #c82333;
+}
+
+.delete-confirm-actions button:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+
+/* =========================================================
+   EMPTY STATE
+   ========================================================= */
+
+.empty-state {
+  padding: 65px 20px;
+  text-align: center;
+  background: #ffffff;
+  border: 1px dashed #d8dce5;
+  border-radius: 16px;
+}
+
+.empty-icon {
+  font-size: 48px;
+  margin-bottom: 12px;
+}
+
+.empty-state h3 {
+  margin: 0 0 8px;
+  font-size: 22px;
+  color: #202938;
+}
+
+.empty-state p {
+  margin: 0 0 20px;
+  color: #777f8b;
+}
+
+.empty-add-btn {
+  border: none;
+  border-radius: 9px;
+  padding: 10px 18px;
+  background: #4f46e5;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.empty-add-btn:hover {
+  background: #4338ca;
+}
+
+
+/* =========================================================
+   MODAL OVERLAY
+   ========================================================= */
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  z-index: 9999;
+}
+
+
+/* =========================================================
+   MODAL
+   ========================================================= */
+
+.study-plan-modal {
+  width: 100%;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
+  background: #ffffff;
+  border-radius: 18px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+}
+
+
+/* =========================================================
+   MODAL HEADER
+   ========================================================= */
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 24px 26px;
+  border-bottom: 1px solid #edf0f4;
+}
+
+.modal-header h2 {
+  margin: 0 0 5px;
+  font-size: 24px;
+  font-weight: 700;
+  color: #202938;
+}
+
+.modal-header p {
+  margin: 0;
+  color: #777f8b;
+  font-size: 14px;
+}
+
+.close-modal-btn {
+  width: 34px;
+  height: 34px;
+  border: none;
+  border-radius: 8px;
+  background: #f2f3f6;
+  color: #555;
+  font-size: 20px;
+  cursor: pointer;
+  line-height: 1;
+}
+
+.close-modal-btn:hover {
+  background: #e6e8ed;
+}
+
+
+/* =========================================================
+   FORM
+   ========================================================= */
+
+.study-plan-form {
+  padding: 25px 26px;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  color: #303846;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.form-group label span {
+  color: #dc3545;
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid #d9dde5;
+  border-radius: 9px;
+  background: #ffffff;
+  color: #303846;
+  font-family: inherit;
+  font-size: 14px;
+  outline: none;
+  transition: 0.2s ease;
+}
+
+.form-group input,
+.form-group select {
+  height: 44px;
+  padding: 0 13px;
+}
+
+.form-group textarea {
+  padding: 12px 13px;
+  resize: vertical;
+  min-height: 100px;
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+  border-color: #6366f1;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+.form-group input::placeholder,
+.form-group textarea::placeholder {
+  color: #a0a6b0;
+}
+
+
+/* =========================================================
+   DATE + TIME
+   ========================================================= */
+
+.date-time-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+
+/* =========================================================
+   VALIDATION
+   ========================================================= */
+
+.validation-message {
+  display: block;
+  margin-top: 6px;
+  color: #dc3545;
+  font-size: 12px;
+}
+
+
+/* =========================================================
+   MODAL ACTIONS
+   ========================================================= */
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding-top: 5px;
+  border-top: 1px solid #edf0f4;
+}
+
+.modal-actions button {
+  min-width: 110px;
+  height: 42px;
+  border-radius: 9px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.cancel-btn {
+  border: 1px solid #d8dce4;
+  background: #ffffff;
+  color: #555;
+}
+
+.cancel-btn:hover {
+  background: #f5f6f8;
+}
+
+.save-btn {
+  border: none;
+  background: #4f46e5;
+  color: #ffffff;
+}
+
+.save-btn:hover {
+  background: #4338ca;
+}
+
+.modal-actions button:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 768px) {
+
+  .study-plans-page {
+    padding: 20px;
+  }
+
+  .page-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+  }
+
+  .add-plan-btn {
+    width: 100%;
+  }
+
+  .search-box {
+    max-width: 100%;
+  }
+
+  .plans-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .date-time-row {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+
+  .modal-overlay {
+    padding: 10px;
+  }
+
+  .study-plan-modal {
+    max-height: 95vh;
+  }
+
+  .modal-header {
+    padding: 20px;
+  }
+
+  .study-plan-form {
+    padding: 20px;
+  }
+}
