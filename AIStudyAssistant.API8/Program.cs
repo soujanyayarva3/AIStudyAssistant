@@ -21,15 +21,16 @@ var builder = WebApplication.CreateBuilder(args);
 // CORS
 // =====================================================
 
-var frontendUrl = builder.Configuration["FRONTEND_URL"];
+const string CorsPolicyName = "AllowAngular";
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAngular", policy =>
+    options.AddPolicy(CorsPolicyName, policy =>
     {
         policy
             .WithOrigins(
-                frontendUrl ?? "http://localhost:4200"
+                "https://aistudyassistant-ui.onrender.com",
+                "http://localhost:4200"
             )
             .AllowAnyHeader()
             .AllowAnyMethod();
@@ -42,9 +43,7 @@ builder.Services.AddCors(options =>
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(
-        builder.Configuration.GetConnectionString(
-            "DefaultConnection"
-        )
+        builder.Configuration.GetConnectionString("DefaultConnection")
     )
 );
 
@@ -75,27 +74,26 @@ builder.Services
     })
     .AddJwtBearer(options =>
     {
-        options.TokenValidationParameters =
-            new TokenValidationParameters
-            {
-                ValidateIssuer = true,
-                ValidateAudience = true,
-                ValidateLifetime = true,
-                ValidateIssuerSigningKey = true,
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
 
-                ValidIssuer =
-                    builder.Configuration["Jwt:Issuer"],
+            ValidIssuer =
+                builder.Configuration["Jwt:Issuer"],
 
-                ValidAudience =
-                    builder.Configuration["Jwt:Audience"],
+            ValidAudience =
+                builder.Configuration["Jwt:Audience"],
 
-                IssuerSigningKey =
-                    new SymmetricSecurityKey(
-                        Encoding.UTF8.GetBytes(
-                            builder.Configuration["Jwt:Key"]!
-                        )
+            IssuerSigningKey =
+                new SymmetricSecurityKey(
+                    Encoding.UTF8.GetBytes(
+                        builder.Configuration["Jwt:Key"]!
                     )
-            };
+                )
+        };
     });
 
 builder.Services.AddAuthorization();
@@ -213,18 +211,62 @@ app.UseSwagger();
 
 app.UseSwaggerUI(options =>
 {
-    options.SwaggerEndpoint("/swagger/v1/swagger.json", "AI Study Assistant API v1");
+    options.SwaggerEndpoint(
+        "/swagger/v1/swagger.json",
+        "AI Study Assistant API v1"
+    );
+
     options.RoutePrefix = "swagger";
+});
+
+// =====================================================
+// EXPLICIT CORS PREFLIGHT HANDLER
+// =====================================================
+
+app.Use(async (context, next) =>
+{
+    var origin = context.Request.Headers.Origin.ToString();
+
+    var allowedOrigins = new[]
+    {
+        "https://aistudyassistant-ui.onrender.com",
+        "http://localhost:4200"
+    };
+
+    if (
+        context.Request.Method.Equals(
+            "OPTIONS",
+            StringComparison.OrdinalIgnoreCase
+        ) &&
+        allowedOrigins.Contains(origin)
+    )
+    {
+        context.Response.Headers["Access-Control-Allow-Origin"] = origin;
+        context.Response.Headers["Access-Control-Allow-Methods"] =
+            "GET, POST, PUT, DELETE, PATCH, OPTIONS";
+        context.Response.Headers["Access-Control-Allow-Headers"] =
+            "Content-Type, Authorization";
+        context.Response.Headers["Access-Control-Max-Age"] =
+            "86400";
+
+        context.Response.StatusCode = StatusCodes.Status204NoContent;
+
+        return;
+    }
+
+    await next();
 });
 
 // =====================================================
 // MIDDLEWARE
 // =====================================================
 
-// HTTPS disabled because Docker uses HTTP
+// HTTPS disabled because Render/Docker uses HTTP internally.
 // app.UseHttpsRedirection();
 
-app.UseCors("AllowAngular");
+app.UseRouting();
+
+app.UseCors(CorsPolicyName);
 
 app.UseAuthentication();
 
