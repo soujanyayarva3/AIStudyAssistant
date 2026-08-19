@@ -189,13 +189,10 @@ builder.Services.AddSwaggerGen(options =>
                     Reference =
                         new OpenApiReference
                         {
-                            Type =
-                                ReferenceType.SecurityScheme,
-
+                            Type = ReferenceType.SecurityScheme,
                             Id = "Bearer"
                         }
                 },
-
                 Array.Empty<string>()
             }
         }
@@ -212,19 +209,20 @@ var app = builder.Build();
 // SWAGGER
 // =====================================================
 
-// =====================================================
-// SWAGGER
-// =====================================================
-
 app.UseSwagger();
-app.UseSwaggerUI();
 
-// HTTPS disabled because Docker uses HTTP
-// app.UseHttpsRedirection();
+app.UseSwaggerUI(options =>
+{
+    options.SwaggerEndpoint("/swagger/v1/swagger.json", "AI Study Assistant API v1");
+    options.RoutePrefix = "swagger";
+});
 
 // =====================================================
 // MIDDLEWARE
 // =====================================================
+
+// HTTPS disabled because Docker uses HTTP
+// app.UseHttpsRedirection();
 
 app.UseCors("AllowAngular");
 
