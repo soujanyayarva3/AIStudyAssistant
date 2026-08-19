@@ -21,7 +21,7 @@ var builder = WebApplication.CreateBuilder(args);
 // CORS
 // =====================================================
 
-var frontendUrl = builder.Configuration["Frontend:Url"];
+var frontendUrl = builder.Configuration["FRONTEND_URL"];
 
 builder.Services.AddCors(options =>
 {
