@@ -1,5 +1,6 @@
 ﻿using System.Net.Http.Json;
 using System.Text.Json;
+using Microsoft.Extensions.Configuration;
 
 namespace AIStudyAssistant.Application.Services;
 
@@ -7,41 +8,103 @@ public class OllamaService
 {
     private readonly HttpClient _httpClient;
 
-    public OllamaService(HttpClient httpClient)
+    public OllamaService(
+        HttpClient httpClient,
+        IConfiguration configuration)
     {
         _httpClient = httpClient;
 
-        _httpClient.BaseAddress =
-            new Uri("http://host.docker.internal:11434/");
+        // =====================================================
+        // OLLAMA URL
+        // =====================================================
+        //
+        // Local Docker:
+        // http://host.docker.internal:11434/
+        //
+        // Render:
+        // Set Ollama:BaseUrl as an environment variable/configuration
+        // to a publicly reachable Ollama endpoint.
+        //
+        var ollamaUrl =
+            configuration["Ollama:BaseUrl"]
+            ?? "http://host.docker.internal:11434/";
+
+        if (!ollamaUrl.EndsWith("/"))
+        {
+            ollamaUrl += "/";
+        }
+
+        _httpClient.BaseAddress = new Uri(ollamaUrl);
 
         _httpClient.Timeout =
             TimeSpan.FromMinutes(5);
+
+        Console.WriteLine(
+            $"OLLAMA BASE URL: {ollamaUrl}"
+        );
     }
 
     // =====================================================
     // GENERIC AI RESPONSE
     // =====================================================
 
-    public async Task<string> GenerateResponseAsync(string prompt)
+    public async Task<string> GenerateResponseAsync(
+        string prompt)
     {
         var request = new
         {
             model = "llama3.2:latest",
+
             prompt = prompt,
+
             stream = false,
 
             options = new
             {
                 temperature = 0.7,
+
                 num_predict = 500
             }
         };
 
-        var response =
-            await _httpClient.PostAsJsonAsync(
-                "api/generate",
-                request
+        Console.WriteLine();
+        Console.WriteLine(
+            "========== AI GENERATION =========="
+        );
+
+        Console.WriteLine(
+            "Calling Ollama..."
+        );
+
+        HttpResponseMessage response;
+
+        try
+        {
+            response =
+                await _httpClient.PostAsJsonAsync(
+                    "api/generate",
+                    request
+                );
+        }
+        catch (HttpRequestException ex)
+        {
+            Console.WriteLine(
+                "OLLAMA CONNECTION ERROR:"
             );
+
+            Console.WriteLine(
+                ex.Message
+            );
+
+            throw new Exception(
+                "Unable to connect to the configured AI service.",
+                ex
+            );
+        }
+
+        Console.WriteLine(
+            $"OLLAMA STATUS: {response.StatusCode}"
+        );
 
         response.EnsureSuccessStatusCode();
 
@@ -285,10 +348,12 @@ public class OllamaService
                 "OLLAMA CONNECTION ERROR:"
             );
 
-            Console.WriteLine(ex.Message);
+            Console.WriteLine(
+                ex.Message
+            );
 
             throw new Exception(
-                "Unable to connect to Ollama. Make sure Ollama is running.",
+                "Unable to connect to the configured AI service.",
                 ex
             );
         }
@@ -312,7 +377,9 @@ public class OllamaService
             "========== RAW OLLAMA RESPONSE =========="
         );
 
-        Console.WriteLine(answer);
+        Console.WriteLine(
+            answer
+        );
 
         Console.WriteLine(
             "=========================================="
@@ -406,7 +473,8 @@ public class OllamaService
                     )
                     .ToUpperInvariant();
 
-                if (string.IsNullOrWhiteSpace(questionText))
+                if (string.IsNullOrWhiteSpace(
+                    questionText))
                 {
                     throw new Exception(
                         $"Question {i + 1} has an empty question."
@@ -475,7 +543,9 @@ public class OllamaService
                 "INVALID JSON FROM OLLAMA:"
             );
 
-            Console.WriteLine(ex.Message);
+            Console.WriteLine(
+                ex.Message
+            );
 
             throw new Exception(
                 "Ollama returned invalid quiz JSON.",
